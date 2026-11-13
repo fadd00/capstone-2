@@ -114,6 +114,7 @@ class PpdbController extends Controller
         $recipients = $query->get();
         $count = 0;
 
+        // shortcut: synchronous Fonnte loop; move to queued job if applicant count exceeds ~100
         foreach ($recipients as $recipient) {
             $fonnteService->sendMessage($recipient->no_hp, $validated['pesan']);
             $count++;
@@ -178,23 +179,26 @@ class PpdbController extends Controller
 
     public function destroyAll(): RedirectResponse
     {
-        DB::transaction(function () {
-            $pendaftarans = Pendaftaran::all();
+        $paths = [];
 
-            foreach ($pendaftarans as $pendaftar) {
+        DB::transaction(function () use (&$paths) {
+            foreach (Pendaftaran::all() as $pendaftar) {
                 foreach (Pendaftaran::ALLOWED_FILES as $field) {
-                    if ($pendaftar->{$field} && Storage::disk('local')->exists($pendaftar->{$field})) {
-                        Storage::disk('local')->delete($pendaftar->{$field});
+                    if ($pendaftar->{$field}) {
+                        $paths[] = $pendaftar->{$field};
                     }
                 }
             }
 
-            // Purge only calon_santri users
             User::role('calon_santri')->delete();
-
-            // Purge all pendaftarans
             Pendaftaran::query()->delete();
         });
+
+        foreach ($paths as $path) {
+            if (Storage::disk('local')->exists($path)) {
+                Storage::disk('local')->delete($path);
+            }
+        }
 
         return redirect()->route('admin.ppdb.index')->with('success', 'Semua data pendaftar berhasil dibersihkan.');
     }

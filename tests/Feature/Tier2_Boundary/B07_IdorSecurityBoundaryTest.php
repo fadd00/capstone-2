@@ -3,7 +3,10 @@
 namespace Tests\Feature\Tier2_Boundary;
 
 use App\Models\KegiatanPondok;
+use App\Models\Murojaah;
+use App\Models\PresensiKegiatan;
 use App\Models\Santri;
+use App\Models\SetoranHafalan;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
 use Tests\Support\CreatesPpdbFixtures;
@@ -184,5 +187,70 @@ class B07_IdorSecurityBoundaryTest extends TestCase
         $response = $this->get(route('user.file', ['id' => $pendaftaran->id, 'field' => 'pas_photo']));
 
         $response->assertRedirect(route('login'));
+    }
+
+    public function test_ustadz_cannot_view_another_ustadz_setoran_or_murojaah_record(): void
+    {
+        $ownerUstadz = $this->createUstadz();
+        $otherUstadz = $this->createUstadz();
+        $santri = Santri::create([
+            'nama' => 'Santri Milik Ustadz Lain',
+            'nis' => '2026303',
+            'tingkatan' => 'tsanawiyah',
+            'kelas' => '7A',
+        ]);
+
+        $setoran = SetoranHafalan::create([
+            'santri_id' => $santri->id,
+            'ustadz_id' => $ownerUstadz->id,
+            'tanggal' => now()->toDateString(),
+            'juz' => 1,
+            'surat' => 'Al-Fatihah',
+            'ayat' => '1-7',
+            'nilai' => 90,
+        ]);
+        $murojaah = Murojaah::create([
+            'santri_id' => $santri->id,
+            'ustadz_id' => $ownerUstadz->id,
+            'tanggal' => now()->toDateString(),
+            'juz' => 1,
+            'surat' => 'Al-Fatihah',
+            'ayat' => '1-7',
+            'nilai' => 90,
+        ]);
+
+        $this->actingAs($otherUstadz)
+            ->get(route('ustadz.setoran-hafalan.show', $setoran->id))
+            ->assertForbidden();
+
+        $this->actingAs($otherUstadz)
+            ->get(route('ustadz.murojaah.show', $murojaah->id))
+            ->assertForbidden();
+    }
+
+    public function test_presensi_santri_rejects_non_existent_santri_id_with_validation_error(): void
+    {
+        $ustadz = $this->createUstadz();
+        $kegiatan = KegiatanPondok::create([
+            'nama_kegiatan' => 'Halaqah Pagi',
+            'tingkatan' => 'semua',
+        ]);
+        $session = PresensiKegiatan::create([
+            'kegiatan_pondok_id' => $kegiatan->id,
+            'ustadz_id' => $ustadz->id,
+            'tanggal' => now()->toDateString(),
+            'hari' => 'Senin',
+            'jam_mulai' => '07:00',
+            'latitude' => -7.797068,
+            'longitude' => 110.370529,
+            'status' => 'valid',
+        ]);
+
+        $response = $this->actingAs($ustadz)->post(
+            route('ustadz.presensi-santri.store', $session->id),
+            ['presensi' => [999999 => 'hadir']]
+        );
+
+        $response->assertSessionHasErrors('presensi');
     }
 }

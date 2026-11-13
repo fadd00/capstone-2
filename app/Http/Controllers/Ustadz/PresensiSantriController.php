@@ -61,6 +61,11 @@ class PresensiSantriController extends Controller
         $request->validate($rules);
 
         $attendanceData = $request->input('presensi', $request->input('kehadiran', []));
+        $santriIds = array_map('intval', array_keys($attendanceData));
+
+        if (Santri::whereIn('id', $santriIds)->count() !== count(array_unique($santriIds))) {
+            return back()->withErrors(['presensi' => 'Terdapat ID santri yang tidak valid.']);
+        }
 
         foreach ($attendanceData as $santriId => $status) {
             PresensiSantri::updateOrCreate(

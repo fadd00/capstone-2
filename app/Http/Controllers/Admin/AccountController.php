@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rules\Password;
 
 class AccountController extends Controller
@@ -45,11 +46,19 @@ class AccountController extends Controller
             return redirect()->route('admin.akun.index')->with('error', 'Tidak dapat menghapus akun sendiri.');
         }
 
-        if (User::role('admin')->count() <= 1) {
+        $deleted = DB::transaction(function () use ($admin): bool {
+            if (User::role('admin')->lockForUpdate()->count() <= 1) {
+                return false;
+            }
+
+            $admin->delete();
+
+            return true;
+        });
+
+        if (! $deleted) {
             return redirect()->route('admin.akun.index')->with('error', 'Tidak dapat menghapus satu-satunya administrator.');
         }
-
-        $admin->delete();
 
         return redirect()->route('admin.akun.index')->with('success', 'Akun administrator berhasil dihapus.');
     }

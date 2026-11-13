@@ -80,6 +80,7 @@ class TahfidzController extends Controller
     public function showSetoran(int $id): View
     {
         $setoran = SetoranHafalan::with(['santri', 'ustadz'])->findOrFail($id);
+        $this->authorizeTahfidzRecord($setoran->ustadz_id, $setoran->santri_id);
 
         return view('ustadz.tahfidz.setoran.show', compact('setoran'));
     }
@@ -137,7 +138,18 @@ class TahfidzController extends Controller
     public function showMurojaah(int $id): View
     {
         $murojaah = Murojaah::with(['santri', 'ustadz'])->findOrFail($id);
+        $this->authorizeTahfidzRecord($murojaah->ustadz_id, $murojaah->santri_id);
 
         return view('ustadz.tahfidz.murojaah.show', compact('murojaah'));
+    }
+
+    private function authorizeTahfidzRecord(int $ustadzId, int $santriId): void
+    {
+        $user = auth()->user();
+        $isBinaan = $user->santriBinaan()->where('santri.id', $santriId)->exists();
+
+        if ($ustadzId !== $user->id && ! $isBinaan) {
+            abort(403, 'Akses ditolak.');
+        }
     }
 }

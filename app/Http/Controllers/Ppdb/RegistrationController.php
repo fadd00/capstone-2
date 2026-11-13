@@ -81,24 +81,31 @@ class RegistrationController extends Controller
             }
         }
 
-        DB::transaction(function () use ($validated, $filePaths, $randomPassword) {
-            Role::firstOrCreate(['name' => 'calon_santri', 'guard_name' => 'web']);
+        try {
+            DB::transaction(function () use ($validated, $filePaths, $randomPassword) {
+                Role::firstOrCreate(['name' => 'calon_santri', 'guard_name' => 'web']);
 
-            $user = User::create([
-                'name' => $validated['nama_lengkap'],
-                'email' => $validated['email'],
-                'password' => $randomPassword,
-            ]);
-            $user->assignRole('calon_santri');
+                $user = User::create([
+                    'name' => $validated['nama_lengkap'],
+                    'email' => $validated['email'],
+                    'password' => $randomPassword,
+                ]);
+                $user->assignRole('calon_santri');
 
-            $pendaftaranData = array_merge($validated, $filePaths, [
-                'user_id' => $user->id,
-                'status' => 'Menunggu',
-                'tanggal_daftar' => now(),
-            ]);
+                $pendaftaranData = array_merge($validated, $filePaths, [
+                    'user_id' => $user->id,
+                    'status' => 'Menunggu',
+                    'tanggal_daftar' => now(),
+                ]);
 
-            Pendaftaran::create($pendaftaranData);
-        });
+                Pendaftaran::create($pendaftaranData);
+            });
+        } catch (\Throwable $e) {
+            foreach ($filePaths as $path) {
+                $this->storageService->delete($path);
+            }
+            throw $e;
+        }
 
         // Dispatch transactional credentials email
         Mail::to($validated['email'])->send(

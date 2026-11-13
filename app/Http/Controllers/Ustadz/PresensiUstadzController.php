@@ -69,13 +69,16 @@ class PresensiUstadzController extends Controller
         }
 
         $distance = $this->geoService->calculateDistance(
-            GeolocationService::PESANTREN_LAT,
-            GeolocationService::PESANTREN_LNG,
+            (float) config('services.pesantren.lat', GeolocationService::PESANTREN_LAT),
+            (float) config('services.pesantren.lng', GeolocationService::PESANTREN_LNG),
             (float) $validated['latitude'],
             (float) $validated['longitude']
         );
 
-        $status = $this->geoService->determineStatus($distance);
+        $status = $this->geoService->determineStatus(
+            $distance,
+            (float) config('services.pesantren.radius', GeolocationService::DEFAULT_RADIUS_METERS)
+        );
 
         $hari = $validated['hari'] ?? null;
         if (empty($hari)) {

@@ -40,4 +40,10 @@ return [
         'url' => env('FONNTE_URL', 'https://api.fonnte.com/send'),
     ],
 
+    'pesantren' => [
+        'lat' => (float) env('PESANTREN_LAT', -7.797068),
+        'lng' => (float) env('PESANTREN_LNG', 110.370529),
+        'radius' => (float) env('PESANTREN_RADIUS', 150.0),
+    ],
+
 ];

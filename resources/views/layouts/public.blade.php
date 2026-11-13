@@ -7,84 +7,68 @@
 
     <title>{{ config('app.name', 'PPTQ Muhammadiyah Ibnu Juraimi') }}</title>
 
-    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
-    <!-- Tailwind Play CDN for standalone rendering -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="font-sans antialiased text-gray-900 bg-gray-50 flex flex-col min-h-screen">
-    <!-- Navigation -->
-    <header class="bg-white shadow-sm sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16 items-center">
-                <div class="flex items-center space-x-3">
-                    <a href="{{ route('home') }}" class="font-bold text-xl text-emerald-700 tracking-tight">
-                        PPTQ Ibnu Juraimi
+    @unless (View::hasSection('hide_nav'))
+    <header class="bg-white border-b border-gray-200">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
+            <a href="{{ route('home') }}" class="font-semibold text-base text-gray-900">
+                PPTQ Ibnu Juraimi
+            </a>
+
+            <nav class="hidden sm:flex items-center space-x-6 text-sm text-gray-600">
+                <a href="{{ route('home') }}" class="hover:text-gray-900">Beranda</a>
+                <a href="{{ route('informasi') }}" class="hover:text-gray-900">Pengumuman</a>
+                <a href="{{ route('contact') }}" class="hover:text-gray-900">Kontak</a>
+                @if (Route::has('pendaftaran'))
+                    <a href="{{ route('pendaftaran') }}" class="text-emerald-700 font-medium hover:text-emerald-800">Daftar PPDB</a>
+                @endif
+            </nav>
+
+            <div class="flex items-center space-x-3 text-sm">
+                @auth
+                    <a href="{{ url('/dashboard') }}" class="px-3 py-1.5 font-medium text-white bg-emerald-700 rounded-md hover:bg-emerald-800">
+                        Dashboard
                     </a>
-                </div>
-
-                <nav class="hidden md:flex space-x-6 font-medium text-sm text-gray-700">
-                    <a href="{{ route('home') }}" class="hover:text-emerald-600 transition">Beranda</a>
-                    <a href="{{ route('informasi') }}" class="hover:text-emerald-600 transition">Pengumuman</a>
-                    <a href="{{ route('contact') }}" class="hover:text-emerald-600 transition">Kontak</a>
+                @else
+                    <a href="{{ route('login') }}" class="text-gray-600 hover:text-gray-900">Masuk</a>
                     @if (Route::has('pendaftaran'))
-                        <a href="{{ route('pendaftaran') }}" class="text-emerald-600 hover:text-emerald-800 font-semibold transition">Daftar PPDB</a>
-                    @endif
-                </nav>
-
-                <div class="flex items-center space-x-3">
-                    @auth
-                        @if (auth()->user()->hasRole('calon_santri'))
-                            <a href="{{ route('user.dashboard') }}" class="px-4 py-2 text-sm font-medium text-white bg-emerald-600 rounded-md hover:bg-emerald-700 transition">
-                                Dashboard Santri
-                            </a>
-                        @else
-                            <a href="{{ url('/dashboard') }}" class="px-4 py-2 text-sm font-medium text-white bg-emerald-600 rounded-md hover:bg-emerald-700 transition">
-                                Dashboard
-                            </a>
-                        @endif
-                    @else
-                        <a href="{{ route('login') }}" class="text-sm font-medium text-gray-700 hover:text-emerald-600 transition">
-                            Masuk
+                        <a href="{{ route('pendaftaran') }}" class="px-3 py-1.5 font-medium text-white bg-emerald-700 rounded-md hover:bg-emerald-800">
+                            Daftar PPDB
                         </a>
-                        @if (Route::has('pendaftaran'))
-                            <a href="{{ route('pendaftaran') }}" class="px-4 py-2 text-sm font-medium text-white bg-emerald-600 rounded-md hover:bg-emerald-700 transition">
-                                Daftar Sekarang
-                            </a>
-                        @endif
-                    @endauth
-                </div>
+                    @endif
+                @endauth
             </div>
         </div>
     </header>
+    @endunless
 
-    <!-- Flash message -->
     @if (session('error'))
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-            <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded text-red-700 text-sm">
+        <div class="max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 mt-4">
+            <div class="bg-red-50 border border-red-200 px-4 py-3 rounded-md text-red-700 text-sm">
                 {{ session('error') }}
             </div>
         </div>
     @endif
     @if (session('success'))
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-            <div class="bg-emerald-50 border-l-4 border-emerald-500 p-4 rounded text-emerald-700 text-sm">
+        <div class="max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 mt-4">
+            <div class="bg-emerald-50 border border-emerald-200 px-4 py-3 rounded-md text-emerald-700 text-sm">
                 {{ session('success') }}
             </div>
         </div>
     @endif
 
-    <!-- Content -->
     <main class="flex-grow">
         @yield('content')
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-gray-300 py-8 mt-12 text-center text-sm">
-        <div class="max-w-7xl mx-auto px-4">
-            <p>&copy; {{ date('Y') }} Pondok Pesantren Tahfidz Al-Qur'an Muhammadiyah Ibnu Juraimi. All rights reserved.</p>
+    <footer class="border-t border-gray-200 bg-white py-5 text-center text-xs text-gray-500">
+        <div class="max-w-5xl mx-auto px-4">
+            &copy; {{ date('Y') }} PPTQ Muhammadiyah Ibnu Juraimi
         </div>
     </footer>
 </body>
