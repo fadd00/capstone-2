@@ -1,8 +1,17 @@
-![SIM PPTQ Banner](README_banner.svg)
+<div align="center">
 
-# SIM PPTQ Ibnu Juraimi & PPDB
+# SIM PPTQ Ibnu Juraimi
 
-[![Laravel 11](https://img.shields.io/badge/Laravel-11-FF2D20)](https://laravel.com) [![PHP ^8.2](https://img.shields.io/badge/PHP-^8.2-777BB4)](https://www.php.net) [![License MIT](https://img.shields.io/badge/License-MIT-blue)](LICENSE)
+Sistem Informasi Manajemen Akademik, Kesantrian & Penerimaan Peserta Didik Baru
+
+![Laravel](https://img.shields.io/badge/Laravel-11.57-FF2D20?style=flat-square&logo=laravel&logoColor=white)
+![PHP](https://img.shields.io/badge/PHP-^8.2-777BB4?style=flat-square&logo=php&logoColor=white)
+![SQLite](https://img.shields.io/badge/Database-SQLite-003B57?style=flat-square&logo=sqlite&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)
+
+</div>
+
+---
 
 Sistem informasi pesantren: PPDB online (pendaftaran, verifikasi, notifikasi WhatsApp, ekspor) dan Pondok Akademik (master data, penugasan, presensi GPS, tracking tahfidz, portal wali murid).  
 
@@ -105,3 +114,15 @@ Test dikelompokkan dalam `tests/Feature/Tier1_FeatureCoverage` (F01–F45), `Tie
 ```bash
 php artisan migrate:fresh --seed
 ```
+
+## Catatan Tambahan untuk Linux
+- Pastikan ekstensi PHP yang diperlukan terinstall (`sudo apt-get install php8.2-sqlite php8.2-xml php8.2-mbstring php8.2-gd php8.2-zip php8.2-fileinfo`).
+- Jika menggunakan Nginx, buat konfigurasi virtual host yang mengarahkan ke `public/` dan set `fastcgi_pass` ke PHP‑FPM.
+- Untuk SQLite, pastikan direktori `storage/` dapat ditulis (`chmod -R 775 storage bootstrap/cache`).
+- Jalankan `php artisan storage:link` untuk membuat symbolic link ke folder `public/storage`.
+
+## Catatan Tambahan untuk Windows
+- Jika memakai XAMPP atau WampServer, aktifkan ekstensi di `php.ini` (hilangkan `;` pada baris `extension=sqlite3`, `extension=pdo_sqlite`, `extension=gd`, dsb.).
+- Pastikan `C:\Program Files\PHP\ext` berada di `extension_dir` pada `php.ini`.
+- Jalankan `php artisan serve` atau gunakan Apache/IIS dengan `DocumentRoot` menuju folder `public`.
+- Untuk SQLite, beri izin penuh pada folder proyek (`Properties → Security`).
