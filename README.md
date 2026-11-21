@@ -3,13 +3,18 @@
 Sistem informasi pesantren: PPDB online (pendaftaran, verifikasi, notifikasi WhatsApp, ekspor) dan Pondok Akademik (master data, penugasan, presensi GPS, tracking tahfidz, portal wali murid).
 Lingkup fitur mengacu pada [dokum-cp1.md](dokum-cp1.md) dan [dokum-ppdb.md](dokum-ppdb.md).
 
-**Stack:** Laravel 11, PHP ^8.4, SQLite, Breeze (Blade), Spatie Permission, Laravel Excel, DomPDF, Vite + Tailwind.
+**Stack:** Laravel 11, PHP ^8.2, SQLite, Breeze (Blade), Spatie Permission, Laravel Excel, DomPDF, Vite + Tailwind.
 
 ## Prasyarat
 
-- PHP >= 8.4 dengan ekstensi: `sqlite3`/`pdo_sqlite`, `mbstring`, `xml`, `zip`, `gd`, `fileinfo`
+**Linux**
+- PHP >= 8.2 dengan ekstensi: `sqlite3`/`pdo_sqlite`, `mbstring`, `xml`, `zip`, `gd`, `fileinfo`
 - Composer
 - Node.js >= 18 dan npm
+
+**Windows**
+- PHP >= 8.4 dengan ekstensi aktif: `pdo_sqlite`, `sqlite3`, `openssl`, `mbstring`, `fileinfo`, `gd`, `zip`, dan `curl`
+  > **Catatan Pengguna Windows (PHP Standalone/Winget):** Salin `php.ini-development` menjadi `php.ini`, lalu aktifkan `extension_dir = "ext"` beserta ekstensi di atas dengan menghapus tanda titik koma (`;`).
 
 ## Instalasi
 
@@ -32,7 +37,8 @@ npm run dev              # opsional, hot reload saat mengembangkan frontend
 
 Atau sekaligus (server + queue + log + vite): `composer run dev`.
 
-*Catatan Pengguna Windows:* Perintah `composer run dev` menjalankan `php artisan pail` yang membutuhkan ekstensi `pcntl` (khusus Linux/macOS). Di Windows, pesan error pada proses `[logs]` dapat diabaikan karena server utama tetap berjalan, atau gunakan `php artisan serve` secara langsung.
+ > *Catatan Pengguna Windows:* Perintah `composer run dev` menjalankan `php artisan pail` yang membutuhkan ekstensi `pcntl` (khusus Linux/macOS). Di Windows, pesan error pada proses `[logs]` dapat diabaikan karena server utama tetap berjalan, atau gunakan `php artisan serve` secara langsung.
+
 
 `QUEUE_CONNECTION=database` — jalankan `php artisan queue:listen` jika ada proses yang memakai queue.
 
