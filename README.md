@@ -3,11 +3,11 @@
 Sistem informasi pesantren: PPDB online (pendaftaran, verifikasi, notifikasi WhatsApp, ekspor) dan Pondok Akademik (master data, penugasan, presensi GPS, tracking tahfidz, portal wali murid).
 Lingkup fitur mengacu pada [dokum-cp1.md](dokum-cp1.md) dan [dokum-ppdb.md](dokum-ppdb.md).
 
-**Stack:** Laravel 11, PHP ^8.2, SQLite, Breeze (Blade), Spatie Permission, Laravel Excel, DomPDF, Vite + Tailwind.
+**Stack:** Laravel 11, PHP ^8.4, SQLite, Breeze (Blade), Spatie Permission, Laravel Excel, DomPDF, Vite + Tailwind.
 
 ## Prasyarat
 
-- PHP >= 8.2 dengan ekstensi: `sqlite3`/`pdo_sqlite`, `mbstring`, `xml`, `zip`, `gd`, `fileinfo`
+- PHP >= 8.4 dengan ekstensi: `sqlite3`/`pdo_sqlite`, `mbstring`, `xml`, `zip`, `gd`, `fileinfo`
 - Composer
 - Node.js >= 18 dan npm
 
