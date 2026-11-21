@@ -32,7 +32,7 @@ npm run dev              # opsional, hot reload saat mengembangkan frontend
 
 Atau sekaligus (server + queue + log + vite): `composer run dev`.
 
-**Catatan Pengguna Windows:** Perintah `composer run dev` menjalankan `php artisan pail` yang membutuhkan ekstensi `pcntl` (khusus Linux/macOS). Di Windows, pesan error pada proses `[logs]` dapat diabaikan karena server utama tetap berjalan, atau gunakan `php artisan serve` secara langsung.
+*Catatan Pengguna Windows:* Perintah `composer run dev` menjalankan `php artisan pail` yang membutuhkan ekstensi `pcntl` (khusus Linux/macOS). Di Windows, pesan error pada proses `[logs]` dapat diabaikan karena server utama tetap berjalan, atau gunakan `php artisan serve` secara langsung.
 
 `QUEUE_CONNECTION=database` — jalankan `php artisan queue:listen` jika ada proses yang memakai queue.
 
