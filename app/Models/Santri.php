@@ -52,9 +52,4 @@ class Santri extends Model
     {
         return $this->hasMany(Murojaah::class, 'santri_id');
     }
-
-    public function pendaftaran()
-    {
-        return $this->hasOne(Pendaftaran::class, 'santri_id');
-    }
 }

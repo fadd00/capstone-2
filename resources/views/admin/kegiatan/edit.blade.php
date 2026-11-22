@@ -1,13 +1,13 @@
-<x-app-layout>
+<x-app-layout title="Edit Kegiatan Pondok">
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h1 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Edit Kegiatan Pondok: ') . $kegiatan->nama_kegiatan }}
-        </h2>
+        </h1>
     </x-slot>
 
     <div class="py-12">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white p-6 shadow sm:rounded-lg">
+            <div class="bg-white p-6 shadow-sm border border-gray-200 sm:rounded-lg">
                 <form method="POST" action="{{ route('admin.kegiatan.update', $kegiatan->id) }}" class="space-y-4">
                     @csrf
                     @method('PUT')
@@ -20,7 +20,7 @@
 
                     <div>
                         <x-input-label for="tingkatan" value="Target Tingkatan" />
-                        <select id="tingkatan" name="tingkatan" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm" required>
+                        <select id="tingkatan" name="tingkatan" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-emerald-600 focus:ring-emerald-600 text-sm" required>
                             <option value="semua" {{ old('tingkatan', $kegiatan->tingkatan) == 'semua' ? 'selected' : '' }}>Semua Tingkatan</option>
                             <option value="tsanawiyah" {{ old('tingkatan', $kegiatan->tingkatan) == 'tsanawiyah' ? 'selected' : '' }}>Tsanawiyah</option>
                             <option value="aliyah" {{ old('tingkatan', $kegiatan->tingkatan) == 'aliyah' ? 'selected' : '' }}>Aliyah</option>
@@ -37,7 +37,7 @@
 
                     <div>
                         <x-input-label for="deskripsi" value="Deskripsi Kegiatan (Opsional)" />
-                        <textarea id="deskripsi" name="deskripsi" rows="3" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">{{ old('deskripsi', $kegiatan->deskripsi) }}</textarea>
+                        <textarea id="deskripsi" name="deskripsi" rows="3" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-emerald-600 focus:ring-emerald-600 text-sm">{{ old('deskripsi', $kegiatan->deskripsi) }}</textarea>
                         <x-input-error class="mt-2" :messages="$errors->get('deskripsi')" />
                     </div>
 

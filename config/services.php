@@ -35,11 +35,6 @@ return [
         ],
     ],
 
-    'fonnte' => [
-        'token' => env('FONNTE_TOKEN', ''),
-        'url' => env('FONNTE_URL', 'https://api.fonnte.com/send'),
-    ],
-
     'pesantren' => [
         'lat' => (float) env('PESANTREN_LAT', -7.797068),
         'lng' => (float) env('PESANTREN_LNG', 110.370529),

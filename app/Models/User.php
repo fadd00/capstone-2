@@ -72,10 +72,4 @@ class User extends Authenticatable
     {
         return $this->hasMany(Murojaah::class, 'ustadz_id');
     }
-
-    // Relasi Calon Santri -> Pendaftaran PPDB (Has One)
-    public function pendaftaran()
-    {
-        return $this->hasOne(Pendaftaran::class, 'user_id');
-    }
 }
