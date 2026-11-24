@@ -1,6 +1,10 @@
 import './bootstrap';
 
 import Alpine from 'alpinejs';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import Lenis from 'lenis';
+import { animate } from 'motion';
 
 window.Alpine = Alpine;
 Alpine.start();
@@ -62,6 +66,7 @@ function initAppModals() {
     dialogs.forEach((dialog) => {
         if (dialog.dataset.initialShow === 'true' && typeof dialog.showModal === 'function') {
             dialog.showModal();
+            animateDialogContent(dialog);
         }
 
         // Light-dismiss fallback for browsers without native closedby="any"
@@ -81,6 +86,7 @@ function initAppModals() {
         const target = document.querySelector(`dialog[data-modal-name="${CSS.escape(String(name))}"]`);
         if (target && typeof target.showModal === 'function' && !target.open) {
             target.showModal();
+            animateDialogContent(target);
         }
     });
 
@@ -90,6 +96,16 @@ function initAppModals() {
         if (target && target.open) {
             target.close('cancel');
         }
+    });
+}
+
+function animateDialogContent(dialog) {
+    const content = dialog.firstElementChild;
+    if (!content || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    animate(content, { opacity: [0, 1], y: [10, 0] }, {
+        duration: 0.24,
+        ease: [0.22, 1, 0.36, 1],
     });
 }
 
@@ -182,6 +198,9 @@ function initSidebarDrawer() {
             shell.inert = false;
             backdrop?.classList.add('hidden');
             openBtn.setAttribute('aria-expanded', 'false');
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                animate(sidebar, { opacity: 1 }, { duration: 0.18, ease: 'easeOut' });
+            }
             return;
         }
 
@@ -190,6 +209,12 @@ function initSidebarDrawer() {
         backdrop?.classList.toggle('hidden', !open);
         openBtn.setAttribute('aria-expanded', String(open));
         shell.inert = open;
+        if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            animate(sidebar, { opacity: open ? [0.94, 1] : [1, 0.96] }, {
+                duration: 0.2,
+                ease: 'easeOut',
+            });
+        }
 
         if (open) {
             sidebar.setAttribute('role', 'dialog');
@@ -278,6 +303,114 @@ function initGeolocationButtons() {
     });
 }
 
+function initMotionInteractions() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const cards = new Set(document.querySelectorAll(
+        '#main-content [class*="grid"] > a, #main-content [class*="grid"] > article, #main-content [class*="grid"] > div[class*="border"], #main-content article'
+    ));
+
+    cards.forEach((card) => {
+        card.addEventListener('pointerenter', () => {
+            animate(card, { y: -3 }, { duration: 0.2, ease: 'easeOut' });
+        });
+        card.addEventListener('pointerleave', () => {
+            animate(card, { y: 0 }, { duration: 0.22, ease: 'easeOut' });
+        });
+    });
+
+    document.querySelectorAll('button[type="submit"]').forEach((button) => {
+        button.addEventListener('pointerdown', () => {
+            if (!button.disabled) {
+                animate(button, { scale: [1, 0.97, 1] }, { duration: 0.22, ease: 'easeOut' });
+            }
+        });
+    });
+}
+
+function initPageAnimations() {
+    gsap.registerPlugin(ScrollTrigger);
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!reducedMotion) {
+        const lenis = new Lenis({
+            autoRaf: false,
+            smoothWheel: true,
+            syncTouch: false,
+        });
+
+        lenis.on('scroll', ScrollTrigger.update);
+        gsap.ticker.add((time) => lenis.raf(time * 1000));
+        gsap.ticker.lagSmoothing(0);
+        window.lenis = lenis;
+
+        const heading = document.querySelector('.app-page-header h1');
+        if (heading) {
+            gsap.from(heading, {
+                opacity: 0,
+                y: 12,
+                duration: 0.55,
+                ease: 'power2.out',
+                clearProps: 'opacity,transform',
+            });
+        }
+
+        const cards = gsap.utils.toArray(
+            '#main-content [class*="grid"] > a, #main-content [class*="grid"] > article, #main-content [class*="grid"] > div[class*="border"], #main-content article'
+        );
+        cards.forEach((card, index) => {
+            gsap.from(card, {
+                opacity: 0,
+                y: 18,
+                duration: 0.5,
+                delay: Math.min(index % 4, 3) * 0.07,
+                ease: 'power2.out',
+                clearProps: 'opacity,transform',
+                scrollTrigger: {
+                    trigger: card,
+                    start: 'top 94%',
+                    once: true,
+                },
+            });
+        });
+
+        const tableRows = document.querySelectorAll('.responsive-table tbody tr');
+        if (tableRows.length) {
+            ScrollTrigger.batch(tableRows, {
+                start: 'top 96%',
+                once: true,
+                onEnter: (batch) => {
+                    gsap.from(batch, {
+                        opacity: 0,
+                        y: 12,
+                        duration: 0.4,
+                        stagger: 0.035,
+                        ease: 'power2.out',
+                        clearProps: 'opacity,transform',
+                    });
+                },
+            });
+        }
+
+        document.querySelectorAll('#main-content form').forEach((element) => {
+            gsap.from(element, {
+                opacity: 0,
+                y: 12,
+                duration: 0.4,
+                ease: 'power2.out',
+                clearProps: 'opacity,transform',
+                scrollTrigger: {
+                    trigger: element,
+                    start: 'top 96%',
+                    once: true,
+                },
+            });
+        });
+    }
+
+    window.addEventListener('load', () => ScrollTrigger.refresh(), { once: true });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     initConfirmDialog();
     initAppModals();
@@ -285,4 +418,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initSidebarDrawer();
     initPasswordToggles();
     initGeolocationButtons();
+    initPageAnimations();
+    initMotionInteractions();
 });
