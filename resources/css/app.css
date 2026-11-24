@@ -4,20 +4,30 @@
 
 @layer base {
     :root {
-        --color-accent: #047857;
-        --color-accent-hover: #065f46;
+        --color-accent: #2563eb;
+        --color-accent-hover: #1d4ed8;
         --color-surface: #ffffff;
-        --color-surface-subtle: #f9fafb;
-        --color-border: #e5e7eb;
-        --color-text: #111827;
-        --color-text-muted: #4b5563;
+        --color-surface-subtle: #f8fafc;
+        --color-border: #e2e8f0;
+        --color-text: #0f172a;
+        --color-text-muted: #64748b;
         --color-danger: #dc2626;
-        --color-focus: #047857;
+        --color-focus: #2563eb;
         color-scheme: light;
     }
 
     html {
         accent-color: var(--color-accent);
+    }
+
+    body {
+        background: #f8fafc;
+        color: #0f172a;
+    }
+
+    ::selection {
+        background: #dbeafe;
+        color: #1e3a8a;
     }
 
     h1, h2, h3, h4 {
@@ -84,6 +94,131 @@
     font-size: 0.875rem;
     font-weight: 600;
     box-shadow: 0 4px 12px rgb(0 0 0 / 0.15);
+}
+
+/* Shared application shell */
+.app-sidebar {
+    box-shadow: 8px 0 32px rgb(15 23 42 / 0.025);
+}
+
+.app-nav-link[aria-current="page"] {
+    box-shadow: inset 3px 0 0 #2563eb;
+}
+
+.app-topbar {
+    box-shadow: 0 1px 3px rgb(15 23 42 / 0.025);
+}
+
+.app-page-header h1 {
+    color: #1e3a8a;
+    font-size: clamp(1.35rem, 2vw, 1.75rem);
+    font-weight: 700;
+    letter-spacing: -0.035em;
+}
+
+.app-main > div {
+    padding-top: 1.5rem;
+    padding-bottom: 3rem;
+}
+
+.app-main .max-w-7xl,
+.app-main .max-w-4xl {
+    padding-inline: 1rem;
+}
+
+@media (min-width: 640px) {
+    .app-main .max-w-7xl,
+    .app-main .max-w-4xl {
+        padding-inline: 1.5rem;
+    }
+}
+
+/* Consistent surfaces, controls, tables, and data-heavy pages */
+.app-main [class~="bg-white"][class~="border-gray-200"] {
+    border-color: #e2e8f0;
+    border-radius: 1rem;
+    box-shadow: 0 2px 8px rgb(15 23 42 / 0.035);
+}
+
+.app-main input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
+.app-main select,
+.app-main textarea,
+.guest-panel input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
+.guest-panel select,
+.guest-panel textarea {
+    border-color: #cbd5e1;
+    border-radius: 0.75rem;
+}
+
+.app-main input:focus,
+.app-main select:focus,
+.app-main textarea:focus,
+.guest-panel input:focus {
+    border-color: #60a5fa;
+    --tw-ring-color: rgb(37 99 235 / 0.2);
+}
+
+.app-main button[type="submit"],
+.app-main a[class*="bg-emerald-"],
+.guest-panel button[type="submit"] {
+    border-radius: 0.75rem;
+    transition: transform 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
+}
+
+.app-main button[type="submit"]:hover,
+.guest-panel button[type="submit"]:hover {
+    box-shadow: 0 5px 14px rgb(37 99 235 / 0.16);
+}
+
+.app-main button[type="submit"].bg-gray-800 {
+    background-color: #2563eb;
+}
+
+.app-main button[type="submit"].bg-gray-800:hover {
+    background-color: #1d4ed8;
+}
+
+.responsive-table-wrapper {
+    border: 1px solid #e2e8f0;
+    border-radius: 0.875rem;
+    background: #fff;
+}
+
+.responsive-table thead th {
+    color: #475569;
+    letter-spacing: 0.06em;
+}
+
+.responsive-table tbody tr {
+    transition: background-color 160ms ease;
+}
+
+.responsive-table tbody tr:hover {
+    background: #f8fbff;
+}
+
+.responsive-table tbody td {
+    border-color: #f1f5f9;
+}
+
+/* Guest sign-in */
+.guest-intro {
+    min-height: 36rem;
+    position: relative;
+    overflow: hidden;
+    background-image: linear-gradient(145deg, #1e3a8a 0%, #172554 72%, #0f2354 100%);
+}
+
+.guest-orb {
+    position: absolute;
+    width: 22rem;
+    height: 22rem;
+    right: -9rem;
+    bottom: 4rem;
+    border: 1px solid rgb(191 219 254 / 0.18);
+    border-radius: 50%;
+    background: radial-gradient(circle, rgb(96 165 250 / 0.22), transparent 68%);
+    box-shadow: 0 0 0 2.5rem rgb(191 219 254 / 0.035), 0 0 0 5rem rgb(191 219 254 / 0.025);
 }
 
 /* Native <dialog> modal styling & scroll containment */
