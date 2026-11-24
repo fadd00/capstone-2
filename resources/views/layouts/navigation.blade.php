@@ -61,40 +61,49 @@
 <!-- Mobile Drawer Backdrop -->
 <div id="app-sidebar-backdrop"
      aria-hidden="true"
-     class="hidden fixed inset-0 bg-gray-900/40 z-30 lg:hidden"></div>
+     class="hidden fixed inset-0 bg-slate-950/40 backdrop-blur-sm z-30 lg:hidden"></div>
 
 <!-- Sidebar / Responsive Drawer -->
 <aside id="app-sidebar"
        aria-label="Menu utama"
-       class="fixed inset-y-0 left-0 z-40 w-64 bg-white border-r border-gray-200 flex flex-col -translate-x-full transition-transform duration-150 lg:translate-x-0 lg:static lg:inset-auto">
-    <div class="h-14 px-4 border-b border-gray-200 flex items-center justify-between shrink-0">
-        <a href="{{ route('dashboard') }}" class="font-semibold text-sm text-gray-900 truncate">
-            PPTQ Ibnu Juraimi
+       class="app-sidebar fixed inset-y-0 left-0 z-40 w-72 bg-white border-r border-slate-200 flex flex-col -translate-x-full transition-transform duration-200 lg:translate-x-0 lg:static lg:inset-auto">
+    <div class="h-20 px-5 border-b border-slate-100 flex items-center justify-between shrink-0">
+        <a href="{{ route('dashboard') }}" class="flex items-center gap-3 min-w-0">
+            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-sm shadow-blue-600/20">
+                <svg class="h-5 w-5" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 19.5A2.5 2.5 0 016.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" />
+                </svg>
+            </span>
+            <span class="min-w-0">
+                <span class="block truncate text-sm font-bold text-blue-950">PPTQ Ibnu Juraimi</span>
+                <span class="block truncate text-[11px] font-medium text-slate-400">Sistem Informasi Pesantren</span>
+            </span>
         </a>
         <button id="sidebar-close-btn"
                 type="button"
                 aria-label="Tutup menu"
-                class="lg:hidden p-2 rounded text-gray-600 hover:text-gray-900 hover:bg-gray-100">
+                class="lg:hidden p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100">
             <svg class="h-5 w-5" aria-hidden="true" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
         </button>
     </div>
 
-    <nav aria-label="Utama" class="flex-1 overflow-y-auto px-3 py-4 space-y-5 text-sm">
+    <nav aria-label="Utama" class="flex-1 overflow-y-auto px-4 py-6 space-y-7 text-sm">
         @foreach ($menuGroups as $group)
             <div>
                 @if ($group['title'])
-                    <p class="px-3 mb-1.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    <p class="px-3 mb-2 text-[10px] font-bold text-slate-400 uppercase tracking-[0.16em]">
                         {{ $group['title'] }}
                     </p>
                 @endif
-                <ul class="space-y-0.5">
+                <ul class="space-y-1">
                     @foreach ($group['items'] as $item)
                         <li>
                             <a href="{{ route($item['route']) }}"
                                @if ($item['active']) aria-current="page" @endif
-                               class="block px-3 py-2 rounded-md transition {{ $item['active'] ? 'bg-emerald-50 text-emerald-900 font-semibold border-s-2 border-emerald-700' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900' }}">
+                               class="app-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ $item['active'] ? 'bg-blue-50 text-blue-900 font-semibold' : 'text-slate-600 hover:bg-slate-50 hover:text-blue-900' }}">
+                                <span aria-hidden="true" class="h-1.5 w-1.5 rounded-full {{ $item['active'] ? 'bg-blue-600' : 'bg-slate-300' }}"></span>
                                 {{ $item['label'] }}
                             </a>
                         </li>

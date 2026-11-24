@@ -8,30 +8,33 @@
         <title>{{ $title ? $title . ' | ' . config('app.name', 'SIM PPTQ Ibnu Juraimi') : config('app.name', 'SIM PPTQ Ibnu Juraimi') }}</title>
 
         <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet">
+        <link href="https://fonts.bunny.net/css?family=plus-jakarta-sans:400,500,600,700&display=swap" rel="stylesheet">
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans antialiased bg-gray-50 text-gray-900">
+    <body class="font-sans antialiased bg-slate-50 text-slate-900">
         <a href="#main-content" class="skip-link">Lewati ke konten utama</a>
 
-        <div class="min-h-screen flex">
+        <div id="app-layout" class="min-h-screen flex">
             @include('layouts.navigation')
 
             <div id="app-shell" class="flex-1 min-w-0 flex flex-col">
-                <div class="h-14 bg-white border-b border-gray-200 px-4 sm:px-6 flex items-center justify-between sticky top-0 z-20">
+                <div class="app-topbar h-16 bg-white/90 border-b border-slate-200 px-4 sm:px-6 lg:px-8 flex items-center justify-between sticky top-0 z-20 backdrop-blur">
                     <div class="flex items-center gap-3 min-w-0">
                         <button id="sidebar-open-btn"
                                 type="button"
                                 aria-label="Buka menu"
                                 aria-expanded="false"
                                 aria-controls="app-sidebar"
-                                class="lg:hidden p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100">
+                                class="lg:hidden p-2 rounded-xl text-slate-600 hover:text-blue-900 hover:bg-blue-50 transition">
                             <svg class="h-5 w-5" aria-hidden="true" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                             </svg>
                         </button>
-                        <span class="lg:hidden font-semibold text-sm text-gray-900 truncate">PPTQ Ibnu Juraimi</span>
+                        <div class="min-w-0">
+                            <span class="hidden lg:block text-xs font-medium uppercase tracking-[0.16em] text-slate-400">Portal Digital Pesantren</span>
+                            <span class="lg:hidden font-semibold text-sm text-blue-900 truncate">PPTQ Ibnu Juraimi</span>
+                        </div>
                     </div>
 
                     <div class="flex items-center">
@@ -42,7 +45,10 @@
                                         aria-controls="user-account-menu"
                                         aria-expanded="false"
                                         data-popover-trigger
-                                        class="inline-flex items-center px-2.5 py-1.5 text-sm font-medium rounded-md text-gray-700 hover:text-gray-900 hover:bg-gray-100">
+                                        class="inline-flex items-center gap-2 px-2.5 py-1.5 text-sm font-semibold rounded-xl text-slate-700 hover:text-blue-900 hover:bg-blue-50 transition">
+                                    <span class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-xs font-bold text-blue-800">
+                                        {{ \Illuminate\Support\Str::upper(\Illuminate\Support\Str::substr(Auth::user()->name, 0, 1)) }}
+                                    </span>
                                     <span>{{ Auth::user()->name }}</span>
                                     <svg class="ms-1 fill-current h-4 w-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
@@ -68,14 +74,14 @@
                 </div>
 
                 @isset($header)
-                    <header class="bg-white border-b border-gray-200">
-                        <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+                    <header class="app-page-header bg-transparent">
+                        <div class="max-w-7xl mx-auto pt-8 pb-2 px-4 sm:px-6 lg:px-8">
                             {{ $header }}
                         </div>
                     </header>
                 @endisset
 
-                <main id="main-content" tabindex="-1" class="flex-1">
+                <main id="main-content" tabindex="-1" class="app-main flex-1">
                     {{ $slot }}
                 </main>
             </div>
@@ -89,7 +95,7 @@
                         Konfirmasi Tindakan
                     </h2>
                     <button type="submit" value="cancel" aria-label="Tutup dialog"
-                            class="p-1 rounded text-gray-500 hover:text-gray-800 hover:bg-gray-100">
+                            class="p-1 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100">
                         <svg class="h-4 w-4" aria-hidden="true" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
@@ -98,11 +104,11 @@
                 <p data-confirm-message class="text-sm text-gray-600"></p>
                 <div class="flex justify-end gap-3 pt-2">
                     <button type="submit" value="cancel"
-                            class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+                            class="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition">
                         Batal
                     </button>
                     <button type="submit" value="confirm" autofocus
-                            class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700">
+                            class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-xl hover:bg-red-700 transition">
                         Ya, Lanjutkan
                     </button>
                 </div>
