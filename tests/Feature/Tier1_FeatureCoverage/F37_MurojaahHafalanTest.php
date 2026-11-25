@@ -32,7 +32,19 @@ class F37_MurojaahHafalanTest extends TestCase
         $responseIndex->assertOk();
 
         $responseCreate = $this->actingAs($ustadz)->get(route('ustadz.murojaah.create'));
-        $responseCreate->assertOk();
+        $responseCreate->assertOk()
+            ->assertViewHas('surahList', function ($surahList) {
+                return count($surahList) === 114
+                    && $surahList[0] === 'Al-Fatihah'
+                    && $surahList[77] === 'An-Naba'
+                    && $surahList[113] === 'An-Nas';
+            })
+            ->assertSee('<option value="Al-Fatihah"', false)
+            ->assertSee('1. Al-Fatihah')
+            ->assertSee('<option value="An-Naba"', false)
+            ->assertSee('78. An-Naba')
+            ->assertSee('<option value="An-Nas"', false)
+            ->assertSee('114. An-Nas');
     }
 
     public function test_ustadz_can_record_valid_murojaah_for_santri_binaan(): void
@@ -114,6 +126,16 @@ class F37_MurojaahHafalanTest extends TestCase
         ]);
 
         $response->assertSessionHasErrors(['juz', 'surat']);
+
+        $responseInvalidSurah = $this->actingAs($ustadz)->post(route('ustadz.murojaah.store'), [
+            'santri_id' => $santri->id,
+            'tanggal' => '2026-11-12',
+            'juz' => 1,
+            'surat' => 'Surat Tidak Valid',
+            'ayat' => '1-10',
+        ]);
+
+        $responseInvalidSurah->assertSessionHasErrors(['surat']);
     }
 
     public function test_ustadz_can_view_murojaah_detail(): void

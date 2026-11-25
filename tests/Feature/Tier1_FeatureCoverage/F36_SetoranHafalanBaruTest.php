@@ -32,7 +32,19 @@ class F36_SetoranHafalanBaruTest extends TestCase
         $responseIndex->assertOk();
 
         $responseCreate = $this->actingAs($ustadz)->get(route('ustadz.setoran-hafalan.create'));
-        $responseCreate->assertOk();
+        $responseCreate->assertOk()
+            ->assertViewHas('surahList', function ($surahList) {
+                return count($surahList) === 114
+                    && $surahList[0] === 'Al-Fatihah'
+                    && $surahList[77] === 'An-Naba'
+                    && $surahList[113] === 'An-Nas';
+            })
+            ->assertSee('<option value="Al-Fatihah"', false)
+            ->assertSee('1. Al-Fatihah')
+            ->assertSee('<option value="An-Naba"', false)
+            ->assertSee('78. An-Naba')
+            ->assertSee('<option value="An-Nas"', false)
+            ->assertSee('114. An-Nas');
     }
 
     public function test_ustadz_can_record_valid_setoran_for_santri_binaan(): void
@@ -131,6 +143,16 @@ class F36_SetoranHafalanBaruTest extends TestCase
         ]);
 
         $response2->assertSessionHasErrors(['juz', 'nilai']);
+
+        $response3 = $this->actingAs($ustadz)->post(route('ustadz.setoran-hafalan.store'), [
+            'santri_id' => $santri->id,
+            'tanggal' => '2026-11-12',
+            'juz' => 1,
+            'surat' => 'Surat Tidak Valid',
+            'ayat' => '1-10',
+        ]);
+
+        $response3->assertSessionHasErrors(['surat']);
     }
 
     public function test_ustadz_can_view_setoran_detail(): void
