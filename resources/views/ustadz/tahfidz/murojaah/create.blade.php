@@ -46,7 +46,15 @@
 
                         <div>
                             <label for="surat" class="block text-sm font-medium text-gray-700">Nama Surat <span aria-hidden="true" class="text-red-600">*</span></label>
-                            <input type="text" name="surat" id="surat" value="{{ old('surat') }}" required placeholder="Contoh: Al-Mulk" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-600 focus:ring-emerald-600 text-sm">
+                            <select name="surat" id="surat" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-600 focus:ring-emerald-600 text-sm">
+                                <option value="">-- Pilih Nama Surat --</option>
+                                @foreach ($surahList as $index => $surah)
+                                    <option value="{{ $surah }}" {{ old('surat') === $surah ? 'selected' : '' }}>
+                                        {{ $index + 1 }}. {{ $surah }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <x-input-error class="mt-2" :messages="$errors->get('surat')" />
                         </div>
 
                         <div>
