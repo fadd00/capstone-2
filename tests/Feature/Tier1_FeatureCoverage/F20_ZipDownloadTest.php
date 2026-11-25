@@ -15,6 +15,7 @@ use Tests\TestCase;
  * Verifies on-demand bundling of all applicant documents into a single .zip
  * archive via GET /admin/pendaftar/{id}/download-zip with proper headers and security.
  */
+#[\PHPUnit\Framework\Attributes\Group('retired-ppdb')]
 class F20_ZipDownloadTest extends TestCase
 {
     use CreatesPpdbFixtures, CreatesTestUsers, RefreshDatabase;

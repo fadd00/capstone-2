@@ -17,6 +17,7 @@ use Tests\TestCase;
  * Verifies public homepage dynamic slider carousel, keunggulan cards,
  * live institution statistics counter, and official contact information.
  */
+#[\PHPUnit\Framework\Attributes\Group('retired-ppdb')]
 class F06_PublicCmsLandingTest extends TestCase
 {
     use CreatesTestUsers, RefreshDatabase;

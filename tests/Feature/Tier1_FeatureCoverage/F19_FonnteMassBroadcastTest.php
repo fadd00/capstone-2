@@ -15,6 +15,7 @@ use Tests\TestCase;
  * Verifies mass WhatsApp broadcasting to filtered applicants (by admission status)
  * via Fonnte Gateway API with validation, role guard, and request batching.
  */
+#[\PHPUnit\Framework\Attributes\Group('retired-ppdb')]
 class F19_FonnteMassBroadcastTest extends TestCase
 {
     use CreatesPpdbFixtures, CreatesTestUsers, MocksFonnteGateway, RefreshDatabase;

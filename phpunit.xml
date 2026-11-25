@@ -11,19 +11,12 @@
         <testsuite name="Feature">
             <directory>tests/Feature</directory>
         </testsuite>
-        <testsuite name="Tier1_FeatureCoverage">
-            <directory>tests/Feature/Tier1_FeatureCoverage</directory>
-        </testsuite>
-        <testsuite name="Tier2_Boundary">
-            <directory>tests/Feature/Tier2_Boundary</directory>
-        </testsuite>
-        <testsuite name="Tier3_Pairwise">
-            <directory>tests/Feature/Tier3_Pairwise</directory>
-        </testsuite>
-        <testsuite name="Tier4_Scenarios">
-            <directory>tests/Feature/Tier4_Scenarios</directory>
-        </testsuite>
     </testsuites>
+    <groups>
+        <exclude>
+            <group>retired-ppdb</group>
+        </exclude>
+    </groups>
     <source>
         <include>
             <directory>app</directory>

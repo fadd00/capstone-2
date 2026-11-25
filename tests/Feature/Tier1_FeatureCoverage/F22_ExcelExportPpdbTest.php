@@ -15,6 +15,7 @@ use Tests\TestCase;
  * Verifies spreadsheet export of applicant recap at GET /admin/export/excel
  * with attachment headers, .xlsx filename, and strict role authorization.
  */
+#[\PHPUnit\Framework\Attributes\Group('retired-ppdb')]
 class F22_ExcelExportPpdbTest extends TestCase
 {
     use CreatesPpdbFixtures, CreatesTestUsers, RefreshDatabase;

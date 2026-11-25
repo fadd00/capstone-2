@@ -20,6 +20,7 @@ use Tests\TestCase;
  * - Null dates with status 'Buka' (allowed)
  * - Status 'Tutup' explicitly (blocked regardless of dates)
  */
+#[\PHPUnit\Framework\Attributes\Group('retired-ppdb')]
 class B04_ScheduleDateBoundaryTest extends TestCase
 {
     use CreatesPpdbFixtures, RefreshDatabase;

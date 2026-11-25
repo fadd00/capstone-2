@@ -15,6 +15,7 @@ use Tests\TestCase;
  * Verifies automatic WhatsApp dispatch via Fonnte Gateway API upon applicant
  * status verification, phone normalization (08xx -> 628xx), and payload structure.
  */
+#[\PHPUnit\Framework\Attributes\Group('retired-ppdb')]
 class F18_FonnteWhatsappNotificationTest extends TestCase
 {
     use CreatesPpdbFixtures, CreatesTestUsers, MocksFonnteGateway, RefreshDatabase;

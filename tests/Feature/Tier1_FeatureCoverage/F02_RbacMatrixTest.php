@@ -92,20 +92,17 @@ class F02_RbacMatrixTest extends TestCase
     }
 
     /**
-     * 6. Calon Santri can access applicant dashboard and others are forbidden.
+     * 6. Removed applicant dashboard routes remain unavailable to every role.
      */
-    public function test_calon_santri_can_access_applicant_dashboard_and_others_are_forbidden(): void
+    public function test_removed_applicant_dashboard_is_unavailable(): void
     {
         $calon = $this->createCalonSantri();
         $ustadz = $this->createUstadz();
         $wali = $this->createWaliMurid();
 
-        $response = $this->actingAs($calon)->get('/user/dashboard');
-        $this->assertContains($response->getStatusCode(), [200, 302]);
-        $this->assertNotEquals(403, $response->getStatusCode());
-
-        $this->actingAs($ustadz)->get('/user/dashboard')->assertStatus(403);
-        $this->actingAs($wali)->get('/user/dashboard')->assertStatus(403);
+        $this->actingAs($calon)->get('/user/dashboard')->assertNotFound();
+        $this->actingAs($ustadz)->get('/user/dashboard')->assertNotFound();
+        $this->actingAs($wali)->get('/user/dashboard')->assertNotFound();
     }
 
     /**
@@ -117,7 +114,6 @@ class F02_RbacMatrixTest extends TestCase
             '/admin/dashboard',
             '/ustadz/dashboard',
             '/wali-murid/dashboard',
-            '/user/dashboard',
         ];
 
         foreach ($protectedRoutes as $route) {
@@ -125,5 +121,7 @@ class F02_RbacMatrixTest extends TestCase
             $response->assertStatus(302);
             $response->assertRedirect('/login');
         }
+
+        $this->get('/user/dashboard')->assertNotFound();
     }
 }

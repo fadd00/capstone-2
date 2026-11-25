@@ -5,6 +5,8 @@ namespace Tests\Feature\Tier1_FeatureCoverage;
 use App\Models\KegiatanPondok;
 use App\Models\PresensiKegiatan;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\Support\CreatesTestUsers;
 use Tests\TestCase;
 
@@ -25,6 +27,13 @@ class F34_GeofencePresensiUstadzTest extends TestCase
 {
     use CreatesTestUsers, RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        Storage::fake('local');
+    }
+
     protected const PESANTREN_LAT = -7.797068;
 
     protected const PESANTREN_LON = 110.370529;
@@ -42,7 +51,13 @@ class F34_GeofencePresensiUstadzTest extends TestCase
         $responseIndex->assertOk();
 
         $responseCreate = $this->actingAs($ustadz)->get(route('ustadz.presensi-kegiatan.create'));
-        $responseCreate->assertOk();
+        $responseCreate->assertOk()
+            ->assertSee('enctype="multipart/form-data"', false)
+            ->assertSee('capture="environment"', false)
+            ->assertSee('readonly', false)
+            ->assertDontSee('name="tanggal"', false)
+            ->assertDontSee('name="hari"', false)
+            ->assertDontSee('name="jam_mulai"', false);
     }
 
     public function test_checkin_within_150m_radius_sets_status_valid(): void
@@ -55,16 +70,13 @@ class F34_GeofencePresensiUstadzTest extends TestCase
         $ustadz->kegiatanPondok()->attach($kegiatan->id);
 
         // Near center: ~5-10 meters offset
-        $payload = [
-            'kegiatan_pondok_id' => $kegiatan->id,
-            'tanggal' => '2026-11-12',
-            'hari' => 'Kamis',
-            'jam_mulai' => '05:30:00',
-            'jam_selesai' => '07:00:00',
+        $today = now()->toDateString();
+        $payload = $this->checkInPayload($kegiatan->id, [
+            'jam_selesai' => '07:00',
             'materi' => 'Setoran Surat Al-Mulk ayat 1-15',
             'latitude' => self::PESANTREN_LAT + 0.000050,
             'longitude' => self::PESANTREN_LON + 0.000050,
-        ];
+        ]);
 
         $response = $this->actingAs($ustadz)->post(route('ustadz.presensi-kegiatan.store'), $payload);
 
@@ -74,9 +86,12 @@ class F34_GeofencePresensiUstadzTest extends TestCase
         $this->assertDatabaseHas('presensi_kegiatan', [
             'ustadz_id' => $ustadz->id,
             'kegiatan_pondok_id' => $kegiatan->id,
-            'tanggal' => '2026-11-12',
+            'tanggal' => $today,
             'status' => 'valid',
         ]);
+
+        $session = PresensiKegiatan::where('ustadz_id', $ustadz->id)->firstOrFail();
+        Storage::disk('local')->assertExists($session->foto_bukti);
     }
 
     public function test_checkin_beyond_150m_radius_sets_status_invalid(): void
@@ -89,16 +104,13 @@ class F34_GeofencePresensiUstadzTest extends TestCase
         $ustadz->kegiatanPondok()->attach($kegiatan->id);
 
         // Far from pesantren: ~800+ meters away
-        $payload = [
-            'kegiatan_pondok_id' => $kegiatan->id,
-            'tanggal' => '2026-11-12',
-            'hari' => 'Kamis',
-            'jam_mulai' => '08:00:00',
-            'jam_selesai' => '09:30:00',
+        $today = now()->toDateString();
+        $payload = $this->checkInPayload($kegiatan->id, [
+            'jam_selesai' => '09:30',
             'materi' => 'Bab Taharah Fiqih Syafi\'i',
             'latitude' => self::PESANTREN_LAT + 0.008000,
             'longitude' => self::PESANTREN_LON + 0.008000,
-        ];
+        ]);
 
         $response = $this->actingAs($ustadz)->post(route('ustadz.presensi-kegiatan.store'), $payload);
 
@@ -108,9 +120,105 @@ class F34_GeofencePresensiUstadzTest extends TestCase
         $this->assertDatabaseHas('presensi_kegiatan', [
             'ustadz_id' => $ustadz->id,
             'kegiatan_pondok_id' => $kegiatan->id,
-            'tanggal' => '2026-11-12',
+            'tanggal' => $today,
             'status' => 'invalid',
         ]);
+    }
+
+    public function test_checkin_uses_server_timestamp_and_indonesian_weekday_instead_of_client_values(): void
+    {
+        $ustadz = $this->createUstadz();
+        $kegiatan = KegiatanPondok::create([
+            'nama_kegiatan' => 'Kajian Server Time',
+            'tingkatan' => 'semua',
+        ]);
+        $ustadz->kegiatanPondok()->attach($kegiatan->id);
+
+        $checkInTime = \Carbon\Carbon::parse('2026-11-25 12:34:56', 'Asia/Jakarta');
+        $this->travelTo($checkInTime);
+
+        $response = $this->actingAs($ustadz)->post(route('ustadz.presensi-kegiatan.store'), $this->checkInPayload($kegiatan->id, [
+            'tanggal' => '2000-01-01',
+            'hari' => 'Senin',
+            'jam_mulai' => '00:01',
+        ]));
+
+        $response->assertSessionHasNoErrors();
+        $this->assertDatabaseHas('presensi_kegiatan', [
+            'ustadz_id' => $ustadz->id,
+            'kegiatan_pondok_id' => $kegiatan->id,
+            'tanggal' => '2026-11-25',
+            'hari' => 'Rabu',
+            'jam_mulai' => '12:34:56',
+        ]);
+
+        $this->travelBack();
+    }
+
+    public function test_checkin_requires_an_evidence_photo(): void
+    {
+        $ustadz = $this->createUstadz();
+        $kegiatan = KegiatanPondok::create([
+            'nama_kegiatan' => 'Kajian Foto Wajib',
+            'tingkatan' => 'semua',
+        ]);
+        $ustadz->kegiatanPondok()->attach($kegiatan->id);
+        $payload = $this->checkInPayload($kegiatan->id);
+        unset($payload['foto_bukti']);
+
+        $response = $this->actingAs($ustadz)->post(route('ustadz.presensi-kegiatan.store'), $payload);
+
+        $response->assertSessionHasErrors('foto_bukti');
+        $this->assertDatabaseCount('presensi_kegiatan', 0);
+    }
+
+    public function test_checkin_rejects_non_image_evidence_photo(): void
+    {
+        $ustadz = $this->createUstadz();
+        $kegiatan = KegiatanPondok::create([
+            'nama_kegiatan' => 'Kajian Foto Invalid',
+            'tingkatan' => 'semua',
+        ]);
+        $ustadz->kegiatanPondok()->attach($kegiatan->id);
+
+        $response = $this->actingAs($ustadz)->post(route('ustadz.presensi-kegiatan.store'), $this->checkInPayload($kegiatan->id, [
+            'foto_bukti' => UploadedFile::fake()->create('bukti.jpg', 10, 'text/plain'),
+        ]));
+
+        $response->assertSessionHasErrors('foto_bukti');
+        $this->assertDatabaseCount('presensi_kegiatan', 0);
+    }
+
+    public function test_photo_preview_is_available_to_owner_and_admin_only(): void
+    {
+        $ustadz = $this->createUstadz();
+        $admin = $this->createAdmin();
+        $otherUstadz = $this->createUstadz();
+        $kegiatan = KegiatanPondok::create([
+            'nama_kegiatan' => 'Kajian Foto Audit',
+            'tingkatan' => 'semua',
+        ]);
+        $path = UploadedFile::fake()->image('bukti.jpg')->store('presensi-kegiatan', 'local');
+        $session = PresensiKegiatan::create([
+            'kegiatan_pondok_id' => $kegiatan->id,
+            'ustadz_id' => $ustadz->id,
+            'tanggal' => now()->toDateString(),
+            'hari' => 'Rabu',
+            'jam_mulai' => now()->format('H:i:s'),
+            'foto_bukti' => $path,
+            'status' => 'valid',
+        ]);
+
+        $photoUrl = route('presensi-kegiatan.photo', $session->id);
+        $this->actingAs($ustadz)->get(route('ustadz.presensi-kegiatan.index'))
+            ->assertOk()
+            ->assertSee($photoUrl, false);
+        $this->actingAs($admin)->get(route('admin.laporan.presensi-ustadz'))
+            ->assertOk()
+            ->assertSee($photoUrl, false);
+        $this->actingAs($ustadz)->get($photoUrl)->assertOk();
+        $this->actingAs($admin)->get($photoUrl)->assertOk();
+        $this->actingAs($otherUstadz)->get($photoUrl)->assertForbidden();
     }
 
     public function test_ustadz_cannot_checkin_twice_for_same_activity_on_same_date(): void
@@ -125,7 +233,7 @@ class F34_GeofencePresensiUstadzTest extends TestCase
         PresensiKegiatan::create([
             'kegiatan_pondok_id' => $kegiatan->id,
             'ustadz_id' => $ustadz->id,
-            'tanggal' => '2026-11-12',
+            'tanggal' => now()->toDateString(),
             'hari' => 'Kamis',
             'jam_mulai' => '16:00:00',
             'latitude' => self::PESANTREN_LAT,
@@ -133,14 +241,7 @@ class F34_GeofencePresensiUstadzTest extends TestCase
             'status' => 'valid',
         ]);
 
-        $secondPayload = [
-            'kegiatan_pondok_id' => $kegiatan->id,
-            'tanggal' => '2026-11-12',
-            'hari' => 'Kamis',
-            'jam_mulai' => '16:30:00',
-            'latitude' => self::PESANTREN_LAT,
-            'longitude' => self::PESANTREN_LON,
-        ];
+        $secondPayload = $this->checkInPayload($kegiatan->id);
 
         $response = $this->actingAs($ustadz)->post(route('ustadz.presensi-kegiatan.store'), $secondPayload);
 
@@ -152,7 +253,7 @@ class F34_GeofencePresensiUstadzTest extends TestCase
         $this->assertCount(1, PresensiKegiatan::where([
             'kegiatan_pondok_id' => $kegiatan->id,
             'ustadz_id' => $ustadz->id,
-            'tanggal' => '2026-11-12',
+            'tanggal' => now()->toDateString(),
         ])->get());
     }
 
@@ -164,14 +265,7 @@ class F34_GeofencePresensiUstadzTest extends TestCase
             'tingkatan' => 'aliyah',
         ]);
 
-        $payload = [
-            'kegiatan_pondok_id' => $unassignedKegiatan->id,
-            'tanggal' => '2026-11-12',
-            'hari' => 'Kamis',
-            'jam_mulai' => '10:00:00',
-            'latitude' => self::PESANTREN_LAT,
-            'longitude' => self::PESANTREN_LON,
-        ];
+        $payload = $this->checkInPayload($unassignedKegiatan->id);
 
         $response = $this->actingAs($ustadz)->post(route('ustadz.presensi-kegiatan.store'), $payload);
 
@@ -195,7 +289,16 @@ class F34_GeofencePresensiUstadzTest extends TestCase
 
         $this->actingAs($wali)->post(route('ustadz.presensi-kegiatan.store'), [
             'kegiatan_pondok_id' => 1,
-            'tanggal' => '2026-11-12',
         ])->assertForbidden();
+    }
+
+    private function checkInPayload(int $kegiatanId, array $overrides = []): array
+    {
+        return array_merge([
+            'kegiatan_pondok_id' => $kegiatanId,
+            'latitude' => self::PESANTREN_LAT,
+            'longitude' => self::PESANTREN_LON,
+            'foto_bukti' => UploadedFile::fake()->image('bukti.jpg'),
+        ], $overrides);
     }
 }

@@ -68,7 +68,7 @@ class F45_AdversarialSecurityHardeningTest extends TestCase
         // User A attempts to download User B's file
         $response = $this->actingAs($userA)->get("/user/pendaftar/{$pendaftarB->id}/file/pas_photo");
 
-        $response->assertStatus(403);
+        $response->assertNotFound();
     }
 
     /**

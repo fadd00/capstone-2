@@ -27,6 +27,7 @@ use Tests\TestCase;
  * - Journey 2: Registration -> Admin verifies 'Tidak Lulus' -> applicant views status ->
  *              downloads own files safely -> blocked from downloading other applicant's files (IDOR protection).
  */
+#[\PHPUnit\Framework\Attributes\Group('retired-ppdb')]
 class S01_CalonSantriAdmissionJourneyTest extends TestCase
 {
     use CreatesPpdbFixtures, CreatesTestUsers, MocksFonnteGateway, RefreshDatabase;

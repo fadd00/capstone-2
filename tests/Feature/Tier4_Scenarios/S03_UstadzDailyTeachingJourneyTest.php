@@ -8,6 +8,7 @@ use App\Models\PresensiKegiatan;
 use App\Models\Santri;
 use App\Models\SetoranHafalan;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Tests\Support\CreatesTestUsers;
 use Tests\TestCase;
 
@@ -56,13 +57,11 @@ class S03_UstadzDailyTeachingJourneyTest extends TestCase
         // Step 3: Ustadz submits GPS presensi at pesantren coordinates (-7.797068, 110.370529)
         $presensiData = [
             'kegiatan_pondok_id' => $kegiatan->id,
-            'tanggal' => now()->toDateString(),
-            'hari' => 'Senin',
-            'jam_mulai' => '07:00',
             'jam_selesai' => '08:30',
             'materi' => 'Bab Sholat Berjamaah',
             'latitude' => -7.797068,
             'longitude' => 110.370529,
+            'foto_bukti' => UploadedFile::fake()->image('bukti-pagi.jpg'),
         ];
 
         $submitPresensiResponse = $this->actingAs($ustadz)->post(
@@ -210,13 +209,11 @@ class S03_UstadzDailyTeachingJourneyTest extends TestCase
         // Step 1: Out-of-bounds check-in attempt (~500m south from pesantren)
         $invalidPresensiData = [
             'kegiatan_pondok_id' => $kegiatan->id,
-            'tanggal' => now()->toDateString(),
-            'hari' => 'Rabu',
-            'jam_mulai' => '16:00',
             'jam_selesai' => '17:15',
             'materi' => 'Hadits ke-5: Perkara Baru Dalam Agama',
             'latitude' => -7.801500,
             'longitude' => 110.370529,
+            'foto_bukti' => UploadedFile::fake()->image('bukti-luar-radius.jpg'),
         ];
 
         $outOfBoundsResponse = $this->actingAs($ustadz)->post(
@@ -232,15 +229,14 @@ class S03_UstadzDailyTeachingJourneyTest extends TestCase
         $this->assertEquals('invalid', $invalidSession->status);
 
         // Step 2: Valid check-in within pesantren geofence perimeter (-7.797068, 110.370529)
+        $this->travelTo(now()->addDay());
         $validPresensiData = [
             'kegiatan_pondok_id' => $kegiatan->id,
-            'tanggal' => now()->addDay()->toDateString(),
-            'hari' => 'Kamis',
-            'jam_mulai' => '16:00',
             'jam_selesai' => '17:15',
             'materi' => 'Hadits ke-6: Halal dan Haram',
             'latitude' => -7.797068,
             'longitude' => 110.370529,
+            'foto_bukti' => UploadedFile::fake()->image('bukti-dalam-radius.jpg'),
         ];
 
         $validResponse = $this->actingAs($ustadz)->post(
@@ -248,6 +244,7 @@ class S03_UstadzDailyTeachingJourneyTest extends TestCase
             $validPresensiData
         );
         $validResponse->assertRedirect();
+        $this->travelBack();
 
         $validSession = PresensiKegiatan::where('kegiatan_pondok_id', $kegiatan->id)
             ->where('ustadz_id', $ustadz->id)

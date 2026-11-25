@@ -5,6 +5,7 @@ namespace Tests\Feature\Tier2_Boundary;
 use App\Models\KegiatanPondok;
 use App\Services\GeolocationService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Tests\Support\CreatesTestUsers;
 use Tests\TestCase;
 
@@ -255,12 +256,10 @@ class B01_GeofenceRadiusBoundaryTest extends TestCase
 
         $validPayload = [
             'kegiatan_pondok_id' => $kegiatan->id,
-            'tanggal' => now()->toDateString(),
-            'hari' => 'Senin',
-            'jam_mulai' => '05:30',
             'materi' => 'Tafsir Jalalain',
             'latitude' => $validLat,
             'longitude' => $validLng,
+            'foto_bukti' => UploadedFile::fake()->image('bukti-valid.jpg'),
         ];
 
         $responseValid = $this->actingAs($ustadz)->post(route('ustadz.presensi-kegiatan.store'), $validPayload);
@@ -291,12 +290,10 @@ class B01_GeofenceRadiusBoundaryTest extends TestCase
 
         $invalidPayload = [
             'kegiatan_pondok_id' => $kegiatan2->id,
-            'tanggal' => now()->toDateString(),
-            'hari' => 'Senin',
-            'jam_mulai' => '16:00',
             'materi' => 'Hadits Arbain',
             'latitude' => $invalidLat,
             'longitude' => $invalidLng,
+            'foto_bukti' => UploadedFile::fake()->image('bukti-invalid.jpg'),
         ];
 
         $responseInvalid = $this->actingAs($ustadz)->post(route('ustadz.presensi-kegiatan.store'), $invalidPayload);

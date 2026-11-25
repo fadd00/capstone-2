@@ -15,6 +15,7 @@ use Tests\TestCase;
  * Verifies secure file download at /user/pendaftar/{id}/file/{field} with strict
  * authorization checking (auth()->id() === user_id) preventing IDOR data leaks.
  */
+#[\PHPUnit\Framework\Attributes\Group('retired-ppdb')]
 class F15_ApplicantFileDownloadIdorTest extends TestCase
 {
     use CreatesPpdbFixtures, CreatesTestUsers, RefreshDatabase;

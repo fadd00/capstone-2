@@ -25,13 +25,13 @@ class F05_SeedersTest extends TestCase
     }
 
     /**
-     * 2. Seeders establish the 4 mandatory Spatie roles: admin, ustadz, wali_murid, calon_santri.
+     * 2. Seeders establish the 3 portal roles currently used by the application.
      */
-    public function test_seeders_create_all_four_spatie_roles(): void
+    public function test_seeders_create_current_portal_roles(): void
     {
         Artisan::call('db:seed');
 
-        $requiredRoles = ['admin', 'ustadz', 'wali_murid', 'calon_santri'];
+        $requiredRoles = ['admin', 'ustadz', 'wali_murid'];
 
         foreach ($requiredRoles as $roleName) {
             $this->assertTrue(
@@ -55,19 +55,15 @@ class F05_SeedersTest extends TestCase
     }
 
     /**
-     * 4. Seeders populate essential CMS and PPDB status form records.
+     * 4. Removed public PPDB/CMS features are not initialized by the application seeders.
      */
-    public function test_seeders_populate_cms_master_fixtures(): void
+    public function test_seeders_do_not_initialize_removed_ppdb_cms_records(): void
     {
         Artisan::call('db:seed');
 
-        $this->assertGreaterThanOrEqual(1, StatusForm::count(), 'StatusForm table must have at least 1 record.');
-        $this->assertGreaterThanOrEqual(1, Statistik::count(), 'Statistik table must have at least 1 record.');
-        $this->assertGreaterThanOrEqual(1, Kontak::count(), 'Kontak table must have at least 1 record.');
-
-        // Verify default status form is initialized as 'Buka'
-        $statusForm = StatusForm::first();
-        $this->assertContains($statusForm->status, ['Buka', 'Tutup']);
+        $this->assertSame(0, StatusForm::count());
+        $this->assertSame(0, Statistik::count());
+        $this->assertSame(0, Kontak::count());
     }
 
     /**

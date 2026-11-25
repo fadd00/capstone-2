@@ -21,6 +21,7 @@ use Tests\TestCase;
  * - Scenario 2: PPDB Intake Transition (Reviewing pendaftar, verification, promotion with 7-digit NIS,
  *               binaan assignment, and report generation).
  */
+#[\PHPUnit\Framework\Attributes\Group('retired-ppdb')]
 class S02_AdminPesantrenAcademicCycleTest extends TestCase
 {
     use CreatesPpdbFixtures, CreatesTestUsers, MocksFonnteGateway, RefreshDatabase;

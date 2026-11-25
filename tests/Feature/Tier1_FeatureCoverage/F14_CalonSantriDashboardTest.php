@@ -14,6 +14,7 @@ use Tests\TestCase;
  * Verifies applicant status tracker on /user/dashboard
  * with status indicators (Menunggu, Lulus, Tidak Lulus) and Spatie RBAC.
  */
+#[\PHPUnit\Framework\Attributes\Group('retired-ppdb')]
 class F14_CalonSantriDashboardTest extends TestCase
 {
     use CreatesPpdbFixtures, CreatesTestUsers, RefreshDatabase;

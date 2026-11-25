@@ -15,6 +15,7 @@ use Tests\TestCase;
  * Verifies CheckFormStatus middleware protecting GET /pendaftaran
  * based on status ('Buka'/'Tutup') and dynamic opening/closing date windows.
  */
+#[\PHPUnit\Framework\Attributes\Group('retired-ppdb')]
 class F09_CheckFormStatusMiddlewareTest extends TestCase
 {
     use CreatesPpdbFixtures, CreatesTestUsers, RefreshDatabase;

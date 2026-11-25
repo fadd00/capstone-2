@@ -5,6 +5,7 @@ namespace Tests\Feature\Tier1_FeatureCoverage;
 use App\Models\Murojaah;
 use App\Models\Santri;
 use App\Models\SetoranHafalan;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Support\CreatesTestUsers;
 use Tests\TestCase;
@@ -24,6 +25,20 @@ use Tests\TestCase;
 class F42_LaporanMingguanWaliTest extends TestCase
 {
     use CreatesTestUsers, RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        Carbon::setTestNow(Carbon::parse('2026-11-11 12:00:00', 'Asia/Jakarta'));
+    }
+
+    protected function tearDown(): void
+    {
+        Carbon::setTestNow();
+
+        parent::tearDown();
+    }
 
     public function test_wali_murid_can_view_laporan_mingguan_index_page(): void
     {

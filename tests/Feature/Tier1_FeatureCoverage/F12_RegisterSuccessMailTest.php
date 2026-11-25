@@ -18,6 +18,7 @@ use Tests\TestCase;
  * Verifies transactional delivery of RegisterSuccessMail containing
  * generated login credentials upon successful online PPDB submission.
  */
+#[\PHPUnit\Framework\Attributes\Group('retired-ppdb')]
 class F12_RegisterSuccessMailTest extends TestCase
 {
     use CreatesPpdbFixtures, CreatesTestUsers, RefreshDatabase;

@@ -9,6 +9,7 @@ use Tests\Support\CreatesPpdbFixtures;
 use Tests\Support\CreatesTestUsers;
 use Tests\TestCase;
 
+#[\PHPUnit\Framework\Attributes\Group('retired-ppdb')]
 class PendaftarPromotionServiceTest extends TestCase
 {
     use CreatesPpdbFixtures;

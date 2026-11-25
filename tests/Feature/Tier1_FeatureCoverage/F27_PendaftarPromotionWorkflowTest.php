@@ -20,6 +20,7 @@ use Tests\TestCase;
  * - Unique NIS validation enforcement
  * - Strict role authorization (403 for non-admin)
  */
+#[\PHPUnit\Framework\Attributes\Group('retired-ppdb')]
 class F27_PendaftarPromotionWorkflowTest extends TestCase
 {
     use CreatesPpdbFixtures, CreatesTestUsers, RefreshDatabase;

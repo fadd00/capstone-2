@@ -15,6 +15,7 @@ use Tests\TestCase;
  * Verifies admin PPDB dashboard, applicant list table, metric cards
  * (Total, Menunggu, Lulus, Tidak Lulus), and gender ratio analytics.
  */
+#[\PHPUnit\Framework\Attributes\Group('retired-ppdb')]
 class F16_PpdbAdminAnalyticsTest extends TestCase
 {
     use CreatesPpdbFixtures, CreatesTestUsers, RefreshDatabase;

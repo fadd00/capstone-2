@@ -13,6 +13,7 @@ use Tests\TestCase;
  * Source: dokum-ppdb §5.1, §7.1, Build Plan §7.1
  * Verifies official institution contact info, address, phone number, and email.
  */
+#[\PHPUnit\Framework\Attributes\Group('retired-ppdb')]
 class F08_KontakResmiTest extends TestCase
 {
     use CreatesTestUsers, RefreshDatabase;

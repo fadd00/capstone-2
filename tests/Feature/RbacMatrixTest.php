@@ -16,11 +16,11 @@ class RbacMatrixTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_four_canonical_roles_created_on_web_guard(): void
+    public function test_three_canonical_roles_created_on_web_guard(): void
     {
         $this->seed(RoleSeeder::class);
 
-        $expectedRoles = ['admin', 'ustadz', 'wali_murid', 'calon_santri'];
+        $expectedRoles = ['admin', 'ustadz', 'wali_murid'];
 
         foreach ($expectedRoles as $roleName) {
             $this->assertDatabaseHas('roles', [
@@ -33,7 +33,7 @@ class RbacMatrixTest extends TestCase
             $this->assertEquals($roleName, $role->name);
         }
 
-        $this->assertEquals(4, Role::count());
+        $this->assertEquals(3, Role::count());
     }
 
     public function test_users_can_be_assigned_and_checked_for_roles(): void
@@ -49,7 +49,6 @@ class RbacMatrixTest extends TestCase
         $this->assertTrue($admin->hasRole('admin'));
         $this->assertFalse($admin->hasRole('ustadz'));
         $this->assertFalse($admin->hasRole('wali_murid'));
-        $this->assertFalse($admin->hasRole('calon_santri'));
 
         $ustadz = User::create([
             'name' => 'Ustadz Role User',
@@ -69,14 +68,6 @@ class RbacMatrixTest extends TestCase
         $this->assertTrue($wali->hasRole('wali_murid'));
         $this->assertFalse($wali->hasRole('admin'));
 
-        $calon = User::create([
-            'name' => 'Calon Santri User',
-            'email' => 'calon_role@test.com',
-            'password' => Hash::make('password'),
-        ]);
-        $calon->assignRole('calon_santri');
-        $this->assertTrue($calon->hasRole('calon_santri'));
-        $this->assertFalse($calon->hasRole('admin'));
     }
 
     public function test_seeders_correctly_assign_roles_to_seeded_users(): void

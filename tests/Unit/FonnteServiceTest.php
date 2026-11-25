@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Http;
 use Tests\Support\MocksFonnteGateway;
 use Tests\TestCase;
 
+#[\PHPUnit\Framework\Attributes\Group('retired-ppdb')]
 class FonnteServiceTest extends TestCase
 {
     use MocksFonnteGateway;

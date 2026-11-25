@@ -8,6 +8,7 @@ use App\Models\PresensiKegiatan;
 use App\Models\Santri;
 use App\Models\SetoranHafalan;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Tests\Support\CreatesPpdbFixtures;
 use Tests\Support\CreatesTestUsers;
@@ -25,6 +26,7 @@ use Tests\TestCase;
  * - Ustadz cannot input tahfidz setoran/murojaah for santri not in their binaan (403 Forbidden)
  * - Guest accessing private file download is redirected to login (302 / 401)
  */
+#[\PHPUnit\Framework\Attributes\Group('retired-ppdb')]
 class B07_IdorSecurityBoundaryTest extends TestCase
 {
     use CreatesPpdbFixtures, CreatesTestUsers, RefreshDatabase;
@@ -128,11 +130,9 @@ class B07_IdorSecurityBoundaryTest extends TestCase
 
         $payload = [
             'kegiatan_pondok_id' => $unassignedKegiatan->id,
-            'tanggal' => now()->toDateString(),
-            'hari' => 'Senin',
-            'jam_mulai' => '07:00',
             'latitude' => -7.797068,
             'longitude' => 110.370529,
+            'foto_bukti' => UploadedFile::fake()->image('bukti.jpg'),
         ];
 
         $response = $this->actingAs($ustadz)->post(route('ustadz.presensi-kegiatan.store'), $payload);

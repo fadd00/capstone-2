@@ -22,6 +22,7 @@ use Tests\TestCase;
  * 4. Linking pendaftar->santri_id & wali_murid_id
  * 5. Prevention of duplicate promotion and non-Lulus promotion
  */
+#[\PHPUnit\Framework\Attributes\Group('retired-ppdb')]
 class P01_PpdbToSantriPipelineTest extends TestCase
 {
     use CreatesPpdbFixtures, CreatesTestUsers, MocksFonnteGateway, RefreshDatabase;

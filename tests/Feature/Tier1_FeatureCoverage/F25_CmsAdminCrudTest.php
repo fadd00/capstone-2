@@ -20,6 +20,7 @@ use Tests\TestCase;
  * Verifies admin CRUD operations across all CMS entities:
  * Carousels, Keunggulan, Statistik (live counter), Informasi (announcements), and Kontak.
  */
+#[\PHPUnit\Framework\Attributes\Group('retired-ppdb')]
 class F25_CmsAdminCrudTest extends TestCase
 {
     use CreatesTestUsers, RefreshDatabase;

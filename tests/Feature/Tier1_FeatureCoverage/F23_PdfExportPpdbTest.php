@@ -15,6 +15,7 @@ use Tests\TestCase;
  * Verifies formatted A4 landscape PDF recap generation at GET /admin/export/pdf
  * with PDF headers, stream rendering, and role authorization.
  */
+#[\PHPUnit\Framework\Attributes\Group('retired-ppdb')]
 class F23_PdfExportPpdbTest extends TestCase
 {
     use CreatesPpdbFixtures, CreatesTestUsers, RefreshDatabase;

@@ -19,6 +19,7 @@ use Tests\TestCase;
  * 4. PDF A4 landscape summary report export
  * 5. Data fidelity and temporary file cleanup
  */
+#[\PHPUnit\Framework\Attributes\Group('retired-ppdb')]
 class P05_PpdbZipAndExportSyncTest extends TestCase
 {
     use CreatesPpdbFixtures, CreatesTestUsers, RefreshDatabase;

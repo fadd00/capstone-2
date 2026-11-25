@@ -7,6 +7,7 @@ use App\Models\PresensiKegiatan;
 use App\Models\PresensiSantri;
 use App\Models\Santri;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Tests\Support\CreatesTestUsers;
 use Tests\TestCase;
 
@@ -49,12 +50,10 @@ class P03_UstadzAssignmentPresensiTest extends TestCase
         // Step 2: Ustadz checks in via GPS Haversine at campus center
         $presensiData = [
             'kegiatan_pondok_id' => $kegiatan->id,
-            'tanggal' => now()->toDateString(),
-            'hari' => 'Selasa',
-            'jam_mulai' => '16:00',
             'latitude' => -7.797068,
             'longitude' => 110.370529,
             'materi' => 'Hukum Nun Mati dan Tanwin',
+            'foto_bukti' => UploadedFile::fake()->image('bukti.jpg'),
         ];
 
         $responsePresensi = $this->actingAs($ustadz)->post(route('ustadz.presensi-kegiatan.store'), $presensiData);

@@ -18,6 +18,7 @@ use Tests\TestCase;
  * Verifies automatic creation of User record with random 8-char password,
  * Spatie 'calon_santri' role assignment, and linking to pendaftarans.user_id.
  */
+#[\PHPUnit\Framework\Attributes\Group('retired-ppdb')]
 class F11_AutoGenerateApplicantAccountTest extends TestCase
 {
     use CreatesPpdbFixtures, CreatesTestUsers, RefreshDatabase;

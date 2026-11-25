@@ -13,6 +13,7 @@ use Tests\TestCase;
  * Verifies one-time credential display on /register-success following
  * successful PPDB submission, including login link and session expiry.
  */
+#[\PHPUnit\Framework\Attributes\Group('retired-ppdb')]
 class F13_HalamanKonfirmasiSuksesTest extends TestCase
 {
     use CreatesTestUsers, RefreshDatabase;

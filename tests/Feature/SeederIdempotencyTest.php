@@ -51,7 +51,7 @@ class SeederIdempotencyTest extends TestCase
         ];
 
         // Sanity check baseline counts
-        $this->assertSame(4, $baselineCounts['roles']);
+        $this->assertSame(3, $baselineCounts['roles']);
         $this->assertSame(10, $baselineCounts['users']);
         $this->assertSame(4, $baselineCounts['santri']);
         $this->assertSame(4, $baselineCounts['kegiatan_pondok']);

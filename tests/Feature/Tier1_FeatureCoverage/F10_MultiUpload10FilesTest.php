@@ -17,6 +17,7 @@ use Tests\TestCase;
  * Verifies upload validation for 7 mandatory files and 3 optional files,
  * 2048 KB limit, allowed MIME types (PDF, JPG, JPEG, PNG), and private storage isolation.
  */
+#[\PHPUnit\Framework\Attributes\Group('retired-ppdb')]
 class F10_MultiUpload10FilesTest extends TestCase
 {
     use CreatesPpdbFixtures, CreatesTestUsers, RefreshDatabase;

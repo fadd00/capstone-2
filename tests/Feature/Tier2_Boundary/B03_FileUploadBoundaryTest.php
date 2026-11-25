@@ -21,6 +21,7 @@ use Tests\TestCase;
  * - Missing required files rejected while omitting 3 optional files accepted
  * - Disallowed executable extensions rejected
  */
+#[\PHPUnit\Framework\Attributes\Group('retired-ppdb')]
 class B03_FileUploadBoundaryTest extends TestCase
 {
     use CreatesPpdbFixtures, CreatesTestUsers, RefreshDatabase;

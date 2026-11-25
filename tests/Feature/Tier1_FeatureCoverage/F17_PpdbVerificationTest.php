@@ -15,6 +15,7 @@ use Tests\TestCase;
  * Verifies admin review and verification workflow updating applicant status
  * (Menunggu, Lulus, Tidak Lulus) with authorization and validation constraints.
  */
+#[\PHPUnit\Framework\Attributes\Group('retired-ppdb')]
 class F17_PpdbVerificationTest extends TestCase
 {
     use CreatesPpdbFixtures, CreatesTestUsers, MocksFonnteGateway, RefreshDatabase;

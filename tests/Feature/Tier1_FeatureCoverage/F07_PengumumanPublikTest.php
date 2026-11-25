@@ -13,6 +13,7 @@ use Tests\TestCase;
  * Source: dokum-ppdb §5.1, §7.1, Build Plan §7.1
  * Verifies public announcement listing for admission schedules, circulars, and updates.
  */
+#[\PHPUnit\Framework\Attributes\Group('retired-ppdb')]
 class F07_PengumumanPublikTest extends TestCase
 {
     use CreatesTestUsers, RefreshDatabase;

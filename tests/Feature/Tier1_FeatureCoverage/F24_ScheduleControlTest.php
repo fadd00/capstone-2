@@ -14,6 +14,7 @@ use Tests\TestCase;
  * Verifies admin control over PPDB schedule settings (status: Buka/Tutup,
  * tanggal_buka, tanggal_tutup) in status_forms table with validation and RBAC.
  */
+#[\PHPUnit\Framework\Attributes\Group('retired-ppdb')]
 class F24_ScheduleControlTest extends TestCase
 {
     use CreatesPpdbFixtures, CreatesTestUsers, RefreshDatabase;

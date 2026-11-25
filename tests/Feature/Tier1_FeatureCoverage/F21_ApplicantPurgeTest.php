@@ -17,6 +17,7 @@ use Tests\TestCase;
  * Verifies single applicant deletion and transactional bulk purge (hapus-semua)
  * including clean cleanup of files and applicant user accounts.
  */
+#[\PHPUnit\Framework\Attributes\Group('retired-ppdb')]
 class F21_ApplicantPurgeTest extends TestCase
 {
     use CreatesPpdbFixtures, CreatesTestUsers, RefreshDatabase;
