@@ -303,6 +303,79 @@ function initGeolocationButtons() {
     });
 }
 
+function initServerCheckinClock() {
+    const timeElement = document.querySelector('[data-checkin-time][data-server-time]');
+    const dateElement = document.querySelector('[data-checkin-date]');
+    const dayElement = document.querySelector('[data-checkin-day]');
+    if (!timeElement || !dateElement || !dayElement) return;
+
+    const serverTime = Number(timeElement.dataset.serverTime) * 1000;
+    const startedAt = performance.now();
+    const dateFormatter = new Intl.DateTimeFormat('id-ID', {
+        timeZone: 'Asia/Jakarta',
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric',
+    });
+    const dayFormatter = new Intl.DateTimeFormat('id-ID', {
+        timeZone: 'Asia/Jakarta',
+        weekday: 'long',
+    });
+    const timeFormatter = new Intl.DateTimeFormat('id-ID', {
+        timeZone: 'Asia/Jakarta',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hourCycle: 'h23',
+    });
+
+    const updateClock = () => {
+        const currentTime = new Date(serverTime + performance.now() - startedAt);
+        dateElement.textContent = dateFormatter.format(currentTime);
+        dayElement.textContent = dayFormatter.format(currentTime);
+        timeElement.textContent = timeFormatter.format(currentTime);
+    };
+
+    updateClock();
+    window.setInterval(updateClock, 1000);
+}
+
+function initCheckinPhotoPreview() {
+    const input = document.querySelector('[data-checkin-photo]');
+    const container = document.querySelector('[data-photo-preview-container]');
+    const preview = document.querySelector('[data-photo-preview]');
+    const retake = document.querySelector('[data-photo-retake]');
+    if (!(input instanceof HTMLInputElement) || !container || !(preview instanceof HTMLImageElement) || !retake) return;
+
+    let previewUrl = null;
+
+    const clearPhoto = () => {
+        if (previewUrl) URL.revokeObjectURL(previewUrl);
+        previewUrl = null;
+        preview.removeAttribute('src');
+        input.value = '';
+        container.classList.add('hidden');
+    };
+
+    input.addEventListener('change', () => {
+        const photo = input.files?.[0];
+        if (!photo) {
+            clearPhoto();
+            return;
+        }
+
+        if (previewUrl) URL.revokeObjectURL(previewUrl);
+        previewUrl = URL.createObjectURL(photo);
+        preview.src = previewUrl;
+        container.classList.remove('hidden');
+    });
+
+    retake.addEventListener('click', () => {
+        clearPhoto();
+        input.click();
+    });
+}
+
 function initMotionInteractions() {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
@@ -418,6 +491,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initSidebarDrawer();
     initPasswordToggles();
     initGeolocationButtons();
+    initServerCheckinClock();
+    initCheckinPhotoPreview();
     initPageAnimations();
     initMotionInteractions();
 });

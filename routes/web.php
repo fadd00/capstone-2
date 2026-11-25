@@ -63,6 +63,11 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     });
 });
 
+Route::middleware('auth')->get(
+    '/presensi-kegiatan/{id}/foto',
+    [PresensiUstadzController::class, 'photo']
+)->name('presensi-kegiatan.photo');
+
 /*
 |--------------------------------------------------------------------------
 | Ustadz Portal (Guarded by auth & role:ustadz)

@@ -21,6 +21,7 @@ class PresensiKegiatan extends Model
         'materi',
         'latitude',
         'longitude',
+        'foto_bukti',
         'status',
     ];
 
