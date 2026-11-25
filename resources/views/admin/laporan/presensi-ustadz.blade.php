@@ -51,6 +51,7 @@
                                 <th scope="col" class="px-4 py-3">Hari &amp; Jam</th>
                                 <th scope="col" class="px-4 py-3">Ustadz</th>
                                 <th scope="col" class="px-4 py-3">Kegiatan Pondok</th>
+                                <th scope="col" class="px-4 py-3">Foto Bukti</th>
                                 <th scope="col" class="px-4 py-3">Materi</th>
                                 <th scope="col" class="px-4 py-3">Status</th>
                             </tr>
@@ -64,6 +65,15 @@
                                     <td data-label="Hari & Jam" class="px-4 py-3 text-xs">{{ $presensi->hari ?? '-' }}, {{ $presensi->jam_mulai ?? '-' }} - {{ $presensi->jam_selesai ?? '-' }}</td>
                                     <td data-label="Ustadz" class="px-4 py-3 font-semibold text-gray-900">{{ $presensi->ustadz->name ?? '-' }}</td>
                                     <td data-label="Kegiatan Pondok" class="px-4 py-3 font-medium text-emerald-800">{{ $presensi->kegiatanPondok->nama_kegiatan ?? '-' }}</td>
+                                    <td data-label="Foto Bukti" class="px-4 py-3">
+                                        @if($presensi->foto_bukti)
+                                            <a href="{{ route('presensi-kegiatan.photo', $presensi->id) }}" target="_blank" rel="noopener noreferrer">
+                                                <img src="{{ route('presensi-kegiatan.photo', $presensi->id) }}" alt="Bukti foto kehadiran" loading="lazy" class="h-14 w-20 rounded border border-gray-200 object-cover">
+                                            </a>
+                                        @else
+                                            -
+                                        @endif
+                                    </td>
                                     <td data-label="Materi" class="px-4 py-3 text-xs text-gray-600">{{ $presensi->materi ?? '-' }}</td>
                                     <td data-label="Status" class="px-4 py-3">
                                         <span class="px-2 py-1 rounded-full text-xs font-semibold {{ $presensi->status === 'valid' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
@@ -73,7 +83,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="px-4 py-6 text-center text-gray-500">Tidak ada rekaman presensi ustadz yang sesuai filter.</td>
+                                    <td colspan="7" class="px-4 py-6 text-center text-gray-500">Tidak ada rekaman presensi ustadz yang sesuai filter.</td>
                                 </tr>
                             @endforelse
                         </tbody>

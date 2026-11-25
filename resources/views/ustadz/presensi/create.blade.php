@@ -8,7 +8,7 @@
     <div class="py-12">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white p-6 shadow-sm border border-gray-200 sm:rounded-lg">
-                <form method="POST" action="{{ route('ustadz.presensi-kegiatan.store') }}" class="space-y-4">
+                <form method="POST" action="{{ route('ustadz.presensi-kegiatan.store') }}" enctype="multipart/form-data" class="space-y-4">
                     @csrf
 
                     <div>
@@ -26,30 +26,30 @@
                         <x-input-error id="kegiatan-error" class="mt-2" :messages="$errors->get('kegiatan_pondok_id')" />
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <x-input-label for="tanggal" value="Tanggal Kegiatan" />
-                            <x-text-input id="tanggal" name="tanggal" type="date" class="mt-1 block w-full" :value="old('tanggal', date('Y-m-d'))" required />
-                            <x-input-error class="mt-2" :messages="$errors->get('tanggal')" />
-                        </div>
-                        <div>
-                            <x-input-label for="hari" value="Hari" />
-                            <x-text-input id="hari" name="hari" type="text" class="mt-1 block w-full" :value="old('hari')" placeholder="Contoh: Senin" />
-                            <x-input-error class="mt-2" :messages="$errors->get('hari')" />
-                        </div>
-                    </div>
+                    @php($checkInNow = now()->locale('id'))
+                    <section class="rounded-md border border-blue-100 bg-blue-50 p-4" aria-live="polite">
+                        <h2 class="text-sm font-semibold text-gray-800">Waktu Check-in</h2>
+                        <p class="mt-1 text-xs text-gray-600">Waktu ditampilkan otomatis dan akan ditetapkan oleh server saat check-in dikirim.</p>
+                        <dl class="mt-3 grid grid-cols-1 gap-2 text-sm sm:grid-cols-3">
+                            <div>
+                                <dt class="text-xs text-gray-500">Tanggal</dt>
+                                <dd data-checkin-date>{{ $checkInNow->translatedFormat('d F Y') }}</dd>
+                            </div>
+                            <div>
+                                <dt class="text-xs text-gray-500">Hari</dt>
+                                <dd data-checkin-day>{{ $checkInNow->translatedFormat('l') }}</dd>
+                            </div>
+                            <div>
+                                <dt class="text-xs text-gray-500">Jam</dt>
+                                <dd><time data-checkin-time data-server-time="{{ $checkInNow->timestamp }}" datetime="{{ $checkInNow->toIso8601String() }}">{{ $checkInNow->format('H:i:s') }}</time> WIB</dd>
+                            </div>
+                        </dl>
+                    </section>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <x-input-label for="jam_mulai" value="Jam Mulai" />
-                            <x-text-input id="jam_mulai" name="jam_mulai" type="time" class="mt-1 block w-full" :value="old('jam_mulai', date('H:i'))" required />
-                            <x-input-error class="mt-2" :messages="$errors->get('jam_mulai')" />
-                        </div>
-                        <div>
-                            <x-input-label for="jam_selesai" value="Jam Selesai (Opsional)" />
-                            <x-text-input id="jam_selesai" name="jam_selesai" type="time" class="mt-1 block w-full" :value="old('jam_selesai')" />
-                            <x-input-error class="mt-2" :messages="$errors->get('jam_selesai')" />
-                        </div>
+                    <div>
+                        <x-input-label for="jam_selesai" value="Jam Selesai (Opsional)" />
+                        <x-text-input id="jam_selesai" name="jam_selesai" type="time" class="mt-1 block w-full" :value="old('jam_selesai')" />
+                        <x-input-error class="mt-2" :messages="$errors->get('jam_selesai')" />
                     </div>
 
                     <div>
@@ -73,18 +73,32 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <x-input-label for="latitude" value="Latitude" />
-                                <x-text-input id="latitude" name="latitude" type="text" inputmode="decimal" class="mt-1 block w-full font-mono text-sm" :value="old('latitude', '-7.797068')" required />
+                                <x-text-input id="latitude" name="latitude" type="text" inputmode="decimal" readonly class="mt-1 block w-full font-mono text-sm" required />
                                 <x-input-error class="mt-2" :messages="$errors->get('latitude')" />
                             </div>
                             <div>
                                 <x-input-label for="longitude" value="Longitude" />
-                                <x-text-input id="longitude" name="longitude" type="text" inputmode="decimal" class="mt-1 block w-full font-mono text-sm" :value="old('longitude', '110.370529')" required />
+                                <x-text-input id="longitude" name="longitude" type="text" inputmode="decimal" readonly class="mt-1 block w-full font-mono text-sm" required />
                                 <x-input-error class="mt-2" :messages="$errors->get('longitude')" />
                             </div>
                         </div>
                         <p id="geo-status" role="status" aria-live="polite" class="text-xs text-gray-600 mt-2">
                             Batas toleransi radius geofence: 150 meter dari titik pusat pesantren.
                         </p>
+                    </fieldset>
+
+                    <fieldset class="border-t pt-4">
+                        <x-input-label for="foto_bukti" value="Foto Bukti Kehadiran" />
+                        <p class="mt-1 text-xs text-gray-600">Ambil foto kondisi/kegiatan saat berada di lokasi pesantren (maksimum 2 MB).</p>
+                        <input id="foto_bukti" name="foto_bukti" type="file" accept="image/*" capture="environment" data-checkin-photo required
+                               class="mt-2 block w-full text-sm text-gray-700 file:mr-4 file:rounded-md file:border-0 file:bg-emerald-50 file:px-4 file:py-2 file:font-semibold file:text-emerald-700 hover:file:bg-emerald-100">
+                        <x-input-error class="mt-2" :messages="$errors->get('foto_bukti')" />
+                        <div data-photo-preview-container class="mt-3 hidden">
+                            <img data-photo-preview alt="Pratinjau foto bukti kehadiran" class="max-h-72 rounded-md border border-gray-200 object-contain">
+                            <button type="button" data-photo-retake class="mt-2 rounded-md border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50">
+                                Ulangi Foto
+                            </button>
+                        </div>
                     </fieldset>
 
                     <div class="flex items-center gap-4 pt-4">

@@ -25,6 +25,7 @@
                                 <th scope="col" class="px-6 py-3 text-left font-medium text-gray-600 uppercase text-xs">Tanggal / Hari</th>
                                 <th scope="col" class="px-6 py-3 text-left font-medium text-gray-600 uppercase text-xs">Kegiatan</th>
                                 <th scope="col" class="px-6 py-3 text-left font-medium text-gray-600 uppercase text-xs">Jam</th>
+                                <th scope="col" class="px-6 py-3 text-left font-medium text-gray-600 uppercase text-xs">Foto Bukti</th>
                                 <th scope="col" class="px-6 py-3 text-left font-medium text-gray-600 uppercase text-xs">Status GPS</th>
                                 <th scope="col" class="px-6 py-3 text-left font-medium text-gray-600 uppercase text-xs">Materi</th>
                                 <th scope="col" class="px-6 py-3 text-right font-medium text-gray-600 uppercase text-xs">Aksi</th>
@@ -42,6 +43,15 @@
                                     </td>
                                     <td data-label="Jam" class="px-6 py-4 whitespace-nowrap text-gray-600">
                                         {{ $session->jam_mulai }} {{ $session->jam_selesai ? '- ' . $session->jam_selesai : '' }}
+                                    </td>
+                                    <td data-label="Foto Bukti" class="px-6 py-4">
+                                        @if($session->foto_bukti)
+                                            <a href="{{ route('presensi-kegiatan.photo', $session->id) }}" target="_blank" rel="noopener noreferrer">
+                                                <img src="{{ route('presensi-kegiatan.photo', $session->id) }}" alt="Bukti foto kehadiran" loading="lazy" class="h-14 w-20 rounded border border-gray-200 object-cover">
+                                            </a>
+                                        @else
+                                            -
+                                        @endif
                                     </td>
                                     <td data-label="Status GPS" class="px-6 py-4 whitespace-nowrap">
                                         @if($session->status === 'valid')
@@ -64,7 +74,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="px-6 py-4 text-center text-gray-500">Belum ada sesi presensi kegiatan yang tercatat.</td>
+                                    <td colspan="7" class="px-6 py-4 text-center text-gray-500">Belum ada sesi presensi kegiatan yang tercatat.</td>
                                 </tr>
                             @endforelse
                         </tbody>

@@ -52,6 +52,15 @@
                     <p class="text-base text-gray-800 mt-1">{{ $session->materi ?? 'Tidak ada catatan materi.' }}</p>
                 </section>
 
+                @if($session->foto_bukti)
+                    <section class="border-t pt-4">
+                        <h2 class="text-xs text-gray-500 uppercase font-medium">Foto Bukti Kehadiran</h2>
+                        <a href="{{ route('presensi-kegiatan.photo', $session->id) }}" target="_blank" rel="noopener noreferrer" class="mt-2 inline-block">
+                            <img src="{{ route('presensi-kegiatan.photo', $session->id) }}" alt="Bukti foto kehadiran" class="max-h-96 rounded-md border border-gray-200 object-contain">
+                        </a>
+                    </section>
+                @endif
+
                 <section class="border-t pt-4">
                     <div class="flex justify-between items-center mb-3">
                         <h2 class="font-semibold text-gray-800">Rekap Kehadiran Santri ({{ $session->presensiSantri->count() }} Santri)</h2>
