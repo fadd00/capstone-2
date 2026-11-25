@@ -132,9 +132,9 @@ class S03_UstadzDailyTeachingJourneyTest extends TestCase
         $setoranPayload = [
             'santri_id' => $santri1->id,
             'tanggal' => now()->toDateString(),
-            'juz' => 30,
             'surat' => 'An-Naba',
-            'ayat' => '1-40',
+            'ayat_mulai' => 1,
+            'ayat_selesai' => 40,
             'nilai' => 88.50,
             'status_selesai' => 1,
             'catatan' => 'Bagus dan lancar, mad thabi’i terjaga.',
@@ -153,9 +153,9 @@ class S03_UstadzDailyTeachingJourneyTest extends TestCase
         $murojaahPayload = [
             'santri_id' => $santri2->id,
             'tanggal' => now()->toDateString(),
-            'juz' => 29,
             'surat' => 'Al-Mulk',
-            'ayat' => '1-30',
+            'ayat_mulai' => 1,
+            'ayat_selesai' => 30,
             'nilai' => 91.00,
             'status_selesai' => 1,
             'catatan' => 'Lancar, terus istiqomah murajaah mandiri.',

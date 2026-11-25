@@ -160,9 +160,9 @@ class B07_IdorSecurityBoundaryTest extends TestCase
         $payload = [
             'santri_id' => $unassignedSantri->id,
             'tanggal' => now()->toDateString(),
-            'juz' => 1,
             'surat' => 'Al-Baqarah',
-            'ayat' => '1-10',
+            'ayat_mulai' => 1,
+            'ayat_selesai' => 10,
             'nilai' => 85.00,
         ];
 

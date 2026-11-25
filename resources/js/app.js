@@ -376,6 +376,66 @@ function initCheckinPhotoPreview() {
     });
 }
 
+// Form setoran/murojaah: surat -> ayat (dibatasi jumlah ayat) -> juz otomatis.
+// Server menghitung ulang juz, jadi ini hanya bantuan tampilan.
+function initTahfidzRange() {
+    const root = document.querySelector('[data-tahfidz-range]');
+    if (!root) return;
+
+    const select = root.querySelector('[data-surah-select]');
+    const start = root.querySelector('[data-ayat-start]');
+    const end = root.querySelector('[data-ayat-end]');
+    const info = root.querySelector('[data-surah-info]');
+    const output = root.querySelector('[data-juz-output]');
+    const juzStarts = JSON.parse(root.dataset.juzStarts);
+
+    const juzOf = (surah, ayat) => {
+        let juz = 1;
+        juzStarts.forEach(([s, a], i) => {
+            if (surah > s || (surah === s && ayat >= a)) juz = i + 1;
+        });
+        return juz;
+    };
+
+    const update = () => {
+        const option = select.selectedOptions[0];
+        const surah = Number(option?.dataset.number || 0);
+        const total = Number(option?.dataset.ayat || 0);
+
+        start.disabled = end.disabled = !surah;
+        if (!surah) {
+            info.textContent = 'Pilih surat terlebih dahulu untuk mengisi ayat.';
+            output.textContent = '-';
+            return;
+        }
+
+        start.max = end.max = String(total);
+        end.min = start.value || '1';
+        info.textContent = `${option.value} terdiri dari ${total} ayat.`;
+
+        const from = Number(start.value);
+        const to = Number(end.value || start.value);
+        if (!from || from > total || to > total || to < from) {
+            output.textContent = '-';
+            return;
+        }
+
+        const juzFrom = juzOf(surah, from);
+        const juzTo = juzOf(surah, to);
+        output.textContent = juzFrom === juzTo ? `Juz ${juzFrom}` : `Juz ${juzFrom}–${juzTo} (dicatat Juz ${juzFrom})`;
+    };
+
+    select.addEventListener('change', () => {
+        start.value = '';
+        end.value = '';
+        update();
+        if (select.value) start.focus();
+    });
+    start.addEventListener('input', update);
+    end.addEventListener('input', update);
+    update();
+}
+
 function initMotionInteractions() {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
@@ -493,6 +553,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initGeolocationButtons();
     initServerCheckinClock();
     initCheckinPhotoPreview();
+    initTahfidzRange();
     initPageAnimations();
     initMotionInteractions();
 });

@@ -5,14 +5,19 @@ namespace App\Http\Controllers\Ustadz;
 use App\Http\Controllers\Controller;
 use App\Models\Murojaah;
 use App\Models\SetoranHafalan;
+use App\Services\QuranService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class TahfidzController extends Controller
 {
+    public function __construct(
+        protected QuranService $quran
+    ) {}
+
     public function indexSetoran(Request $request): View
     {
         $user = $request->user();
@@ -35,46 +40,10 @@ class TahfidzController extends Controller
 
     public function storeSetoran(Request $request): RedirectResponse
     {
-        $validator = Validator::make($request->all(), [
-            'santri_id' => ['required', 'integer', 'exists:santri,id'],
-            'tanggal' => ['required', 'date'],
-            'juz' => ['required', 'integer', 'min:1', 'max:30'],
-            'surat' => ['required', 'string', 'max:100', Rule::in(config('quran.surah'))],
-            'ayat' => ['required', 'string', 'max:50'],
-            'nilai' => ['nullable', 'numeric', 'min:0', 'max:100'],
-            'status_selesai' => ['nullable', 'boolean'],
-            'catatan' => ['nullable', 'string', 'max:1000'],
-        ]);
+        $data = $this->validatedTahfidz($request);
+        $data['catatan'] = $request->input('catatan'); // sudah divalidasi di validatedTahfidz()
 
-        $validator->after(function ($validator) use ($request) {
-            $surat = trim((string) $request->input('surat', ''));
-            $ayat = trim((string) $request->input('ayat', ''));
-
-            if ($surat === '') {
-                $validator->errors()->add('ayat', 'Ayat memerlukan nama surat yang valid.');
-            }
-            if ($ayat === '') {
-                $validator->errors()->add('surat', 'Surat memerlukan rentang ayat yang valid.');
-            }
-        });
-
-        $validated = $validator->validate();
-
-        if (! $request->user()->santriBinaan()->where('santri.id', $validated['santri_id'])->exists()) {
-            abort(403, 'Santri bukan binaan ustadz ini.');
-        }
-
-        SetoranHafalan::create([
-            'santri_id' => $validated['santri_id'],
-            'ustadz_id' => $request->user()->id,
-            'tanggal' => $validated['tanggal'],
-            'juz' => $validated['juz'],
-            'surat' => trim($validated['surat']),
-            'ayat' => trim($validated['ayat']),
-            'nilai' => $validated['nilai'] ?? null,
-            'status_selesai' => (bool) ($validated['status_selesai'] ?? false),
-            'catatan' => $validated['catatan'] ?? null,
-        ]);
+        SetoranHafalan::create($data);
 
         return redirect()->route('ustadz.setoran-hafalan.index')->with('success', 'Setoran hafalan baru berhasil dicatat.');
     }
@@ -109,31 +78,7 @@ class TahfidzController extends Controller
 
     public function storeMurojaah(Request $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'santri_id' => ['required', 'integer', 'exists:santri,id'],
-            'tanggal' => ['required', 'date'],
-            'juz' => ['required', 'integer', 'min:1', 'max:30'],
-            'surat' => ['required', 'string', 'max:100', Rule::in(config('quran.surah'))],
-            'ayat' => ['required', 'string', 'max:50'],
-            'nilai' => ['nullable', 'numeric', 'min:0', 'max:100'],
-            'status_selesai' => ['nullable', 'boolean'],
-            'catatan' => ['nullable', 'string', 'max:1000'],
-        ]);
-
-        if (! $request->user()->santriBinaan()->where('santri.id', $validated['santri_id'])->exists()) {
-            abort(403, 'Santri bukan binaan ustadz ini.');
-        }
-
-        Murojaah::create([
-            'santri_id' => $validated['santri_id'],
-            'ustadz_id' => $request->user()->id,
-            'tanggal' => $validated['tanggal'],
-            'juz' => $validated['juz'],
-            'surat' => trim($validated['surat']),
-            'ayat' => trim($validated['ayat']),
-            'nilai' => $validated['nilai'] ?? null,
-            'status_selesai' => (bool) ($validated['status_selesai'] ?? false),
-        ]);
+        Murojaah::create($this->validatedTahfidz($request));
 
         return redirect()->route('ustadz.murojaah.index')->with('success', 'Murojaah hafalan berhasil dicatat.');
     }
@@ -144,6 +89,52 @@ class TahfidzController extends Controller
         $this->authorizeTahfidzRecord($murojaah->ustadz_id, $murojaah->santri_id);
 
         return view('ustadz.tahfidz.murojaah.show', compact('murojaah'));
+    }
+
+    /**
+     * Validasi bersama setoran & murojaah. Alurnya: surat -> ayat mulai/selesai
+     * (dibatasi jumlah ayat surat) -> juz dihitung server dari ayat mulai.
+     */
+    private function validatedTahfidz(Request $request): array
+    {
+        $validated = $request->validate([
+            'santri_id' => ['required', 'integer', 'exists:santri,id'],
+            'tanggal' => ['required', 'date'],
+            'surat' => ['required', 'string', Rule::in(config('quran.surah'))],
+            'ayat_mulai' => ['required', 'integer', 'min:1'],
+            'ayat_selesai' => ['nullable', 'integer', 'gte:ayat_mulai'],
+            'nilai' => ['nullable', 'numeric', 'min:0', 'max:100'],
+            'status_selesai' => ['nullable', 'boolean'],
+            'catatan' => ['nullable', 'string', 'max:1000'],
+        ]);
+
+        $surahNumber = $this->quran->surahNumber($validated['surat']);
+        $jumlahAyat = $this->quran->ayatCount($surahNumber);
+        $mulai = (int) $validated['ayat_mulai'];
+        $selesai = (int) ($validated['ayat_selesai'] ?? $mulai);
+
+        foreach (['ayat_mulai' => $mulai, 'ayat_selesai' => $selesai] as $field => $ayat) {
+            if ($ayat > $jumlahAyat) {
+                throw ValidationException::withMessages([
+                    $field => "Surat {$validated['surat']} hanya memiliki {$jumlahAyat} ayat.",
+                ]);
+            }
+        }
+
+        if (! $request->user()->santriBinaan()->where('santri.id', $validated['santri_id'])->exists()) {
+            abort(403, 'Santri bukan binaan ustadz ini.');
+        }
+
+        return [
+            'santri_id' => $validated['santri_id'],
+            'ustadz_id' => $request->user()->id,
+            'tanggal' => $validated['tanggal'],
+            'juz' => $this->quran->juzOf($surahNumber, $mulai),
+            'surat' => $validated['surat'],
+            'ayat' => $mulai === $selesai ? (string) $mulai : "{$mulai}-{$selesai}",
+            'nilai' => $validated['nilai'] ?? null,
+            'status_selesai' => (bool) ($validated['status_selesai'] ?? false),
+        ];
     }
 
     private function authorizeTahfidzRecord(int $ustadzId, int $santriId): void

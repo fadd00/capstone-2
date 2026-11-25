@@ -61,9 +61,9 @@ class F36_SetoranHafalanBaruTest extends TestCase
         $payload = [
             'santri_id' => $santri->id,
             'tanggal' => '2026-11-12',
-            'juz' => 30,
             'surat' => 'An-Naba',
-            'ayat' => '1-20',
+            'ayat_mulai' => 1,
+            'ayat_selesai' => 20,
             'nilai' => 92.50,
             'status_selesai' => 1,
             'catatan' => 'Makhraj huruf shad dan sin sudah sangat baik',
@@ -98,9 +98,9 @@ class F36_SetoranHafalanBaruTest extends TestCase
         $payload = [
             'santri_id' => $unassignedSantri->id,
             'tanggal' => '2026-11-12',
-            'juz' => 1,
             'surat' => 'Al-Fatihah',
-            'ayat' => '1-7',
+            'ayat_mulai' => 1,
+            'ayat_selesai' => 7,
             'nilai' => 95.00,
             'status_selesai' => 1,
         ];
@@ -114,42 +114,53 @@ class F36_SetoranHafalanBaruTest extends TestCase
         $this->assertDatabaseMissing('setoran_hafalan', ['santri_id' => $unassignedSantri->id]);
     }
 
-    public function test_setoran_validation_fails_on_out_of_range_juz_or_nilai(): void
+    public function test_setoran_validation_fails_on_out_of_range_ayat_or_nilai(): void
     {
         $ustadz = $this->createUstadz();
         $santri = Santri::create(['nama' => 'Santri Uji Range', 'nis' => '2026052', 'tingkatan' => 'tsanawiyah']);
         $ustadz->santriBinaan()->attach($santri->id);
 
-        // Invalid juz 31 and negative nilai
+        // Al-Fatihah hanya 7 ayat; nilai negatif
         $response = $this->actingAs($ustadz)->post(route('ustadz.setoran-hafalan.store'), [
             'santri_id' => $santri->id,
             'tanggal' => '2026-11-12',
-            'juz' => 31,
-            'surat' => 'Test Surat',
-            'ayat' => '1-10',
+            'surat' => 'Al-Fatihah',
+            'ayat_mulai' => 1,
+            'ayat_selesai' => 8,
             'nilai' => -5,
         ]);
 
-        $response->assertSessionHasErrors(['juz', 'nilai']);
+        $response->assertSessionHasErrors(['nilai']);
 
-        // Invalid juz 0 and nilai 105
+        $response = $this->actingAs($ustadz)->post(route('ustadz.setoran-hafalan.store'), [
+            'santri_id' => $santri->id,
+            'tanggal' => '2026-11-12',
+            'surat' => 'Al-Fatihah',
+            'ayat_mulai' => 1,
+            'ayat_selesai' => 8,
+        ]);
+
+        $response->assertSessionHasErrors(['ayat_selesai' => 'Surat Al-Fatihah hanya memiliki 7 ayat.']);
+
+        // Ayat 0, ayat selesai sebelum ayat mulai, dan nilai 105
         $response2 = $this->actingAs($ustadz)->post(route('ustadz.setoran-hafalan.store'), [
             'santri_id' => $santri->id,
             'tanggal' => '2026-11-12',
-            'juz' => 0,
-            'surat' => 'Test Surat',
-            'ayat' => '1-10',
+            'surat' => 'An-Naba',
+            'ayat_mulai' => 0,
+            'ayat_selesai' => -1,
             'nilai' => 105,
         ]);
 
-        $response2->assertSessionHasErrors(['juz', 'nilai']);
+        $response2->assertSessionHasErrors(['ayat_mulai', 'ayat_selesai', 'nilai']);
+        $this->assertDatabaseCount('setoran_hafalan', 0);
 
         $response3 = $this->actingAs($ustadz)->post(route('ustadz.setoran-hafalan.store'), [
             'santri_id' => $santri->id,
             'tanggal' => '2026-11-12',
-            'juz' => 1,
             'surat' => 'Surat Tidak Valid',
-            'ayat' => '1-10',
+            'ayat_mulai' => 1,
+            'ayat_selesai' => 10,
         ]);
 
         $response3->assertSessionHasErrors(['surat']);

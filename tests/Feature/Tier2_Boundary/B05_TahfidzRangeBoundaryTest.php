@@ -13,7 +13,8 @@ use Tests\TestCase;
  * Source: dokum-cp1 §5.3 Q-UST-05, Build Plan §9.1
  * Verifies boundaries for Setoran Ziyadah and Murojaah inputs:
  * - Juz 1 (minimum) and Juz 30 (maximum) are valid
- * - Juz 0 (underflow) and Juz 31 (overflow) are rejected
+ * - Juz is derived server-side from surat + ayat mulai (client juz ignored)
+ * - Ayat beyond the surah's ayat count, or a reversed range, is rejected
  * - Nilai 0.00 (minimum) and Nilai 100.00 (maximum) are valid
  * - Nilai 100.01 (overflow) and negative values are rejected
  * - Empty/whitespace surat and ayat strings are rejected
@@ -49,9 +50,9 @@ class B05_TahfidzRangeBoundaryTest extends TestCase
         $payloadJuz1 = [
             'santri_id' => $santri->id,
             'tanggal' => now()->toDateString(),
-            'juz' => 1,
             'surat' => 'Al-Baqarah',
-            'ayat' => '1-20',
+            'ayat_mulai' => 1,
+            'ayat_selesai' => 20,
             'nilai' => 85.00,
         ];
         $response1 = $this->actingAs($ustadz)->post(route('ustadz.setoran-hafalan.store'), $payloadJuz1);
@@ -63,9 +64,9 @@ class B05_TahfidzRangeBoundaryTest extends TestCase
         $payloadJuz30 = [
             'santri_id' => $santri->id,
             'tanggal' => now()->toDateString(),
-            'juz' => 30,
             'surat' => 'An-Naba',
-            'ayat' => '1-40',
+            'ayat_mulai' => 1,
+            'ayat_selesai' => 40,
             'nilai' => 90.00,
         ];
         $response30 = $this->actingAs($ustadz)->post(route('ustadz.setoran-hafalan.store'), $payloadJuz30);
@@ -75,35 +76,57 @@ class B05_TahfidzRangeBoundaryTest extends TestCase
     }
 
     /**
-     * 2. Juz 0 (underflow) and Juz 31 (overflow) are rejected by validation.
+     * 2. Juz dihitung server dari surat + ayat mulai; juz kiriman klien diabaikan.
      */
-    public function test_juz_below_minimum_0_and_above_maximum_31_are_rejected(): void
+    public function test_juz_is_derived_from_surat_and_ayat_mulai_not_from_client(): void
     {
         [$ustadz, $santri] = $this->setupUstadzWithSantriBinaan();
 
-        // Juz 0
-        $payloadJuz0 = [
-            'santri_id' => $santri->id,
-            'tanggal' => now()->toDateString(),
-            'juz' => 0,
-            'surat' => 'Al-Fatihah',
-            'ayat' => '1-7',
-            'nilai' => 80.00,
+        $cases = [
+            // [surat, ayat_mulai, ayat_selesai, juz yang diharapkan, ayat tersimpan]
+            ['Al-Baqarah', 141, 141, 1, '141'],     // satu ayat sebelum batas juz 2
+            ['Al-Baqarah', 140, 145, 1, '140-145'], // melintasi batas -> juz ayat mulai
+            ['Al-Baqarah', 255, null, 3, '255'],    // ayat selesai kosong = ayat mulai
+            ['Al-Kahf', 75, 80, 16, '75-80'],
+            ['An-Nas', 1, 6, 30, '1-6'],
         ];
-        $response0 = $this->actingAs($ustadz)->post(route('ustadz.setoran-hafalan.store'), $payloadJuz0);
-        $response0->assertSessionHasErrors(['juz']);
 
-        // Juz 31
-        $payloadJuz31 = [
-            'santri_id' => $santri->id,
-            'tanggal' => now()->toDateString(),
-            'juz' => 31,
-            'surat' => 'Surat Invalid',
-            'ayat' => '1-10',
-            'nilai' => 80.00,
+        foreach ($cases as [$surat, $mulai, $selesai, $juz, $ayat]) {
+            $this->actingAs($ustadz)->post(route('ustadz.setoran-hafalan.store'), [
+                'santri_id' => $santri->id,
+                'tanggal' => now()->toDateString(),
+                'juz' => 99, // diabaikan
+                'surat' => $surat,
+                'ayat_mulai' => $mulai,
+                'ayat_selesai' => $selesai,
+            ])->assertSessionHasNoErrors();
+
+            $this->assertDatabaseHas('setoran_hafalan', ['surat' => $surat, 'ayat' => $ayat, 'juz' => $juz]);
+        }
+    }
+
+    /**
+     * 2b. Ayat di luar jumlah ayat surat atau rentang terbalik ditolak.
+     */
+    public function test_ayat_outside_surah_or_reversed_range_is_rejected(): void
+    {
+        [$ustadz, $santri] = $this->setupUstadzWithSantriBinaan();
+
+        $invalid = [
+            // [field yang diharapkan error, input]
+            ['ayat_mulai', ['surat' => 'Al-Fatihah', 'ayat_mulai' => 8]],
+            ['ayat_selesai', ['surat' => 'Al-Fatihah', 'ayat_mulai' => 1, 'ayat_selesai' => 8]],
+            ['ayat_selesai', ['surat' => 'Al-Baqarah', 'ayat_mulai' => 20, 'ayat_selesai' => 10]],
         ];
-        $response31 = $this->actingAs($ustadz)->post(route('ustadz.setoran-hafalan.store'), $payloadJuz31);
-        $response31->assertSessionHasErrors(['juz']);
+
+        foreach ($invalid as [$field, $fields]) {
+            $this->actingAs($ustadz)->post(route('ustadz.setoran-hafalan.store'), array_merge([
+                'santri_id' => $santri->id,
+                'tanggal' => now()->toDateString(),
+            ], $fields))->assertSessionHasErrors([$field]);
+        }
+
+        $this->assertDatabaseCount('setoran_hafalan', 0);
     }
 
     /**
@@ -117,9 +140,9 @@ class B05_TahfidzRangeBoundaryTest extends TestCase
         $payload0 = [
             'santri_id' => $santri->id,
             'tanggal' => now()->toDateString(),
-            'juz' => 2,
             'surat' => 'Al-Baqarah',
-            'ayat' => '142-150',
+            'ayat_mulai' => 142,
+            'ayat_selesai' => 150,
             'nilai' => 0.00,
         ];
         $response0 = $this->actingAs($ustadz)->post(route('ustadz.setoran-hafalan.store'), $payload0);
@@ -130,9 +153,9 @@ class B05_TahfidzRangeBoundaryTest extends TestCase
         $payload100 = [
             'santri_id' => $santri->id,
             'tanggal' => now()->toDateString(),
-            'juz' => 3,
             'surat' => 'Ali Imran',
-            'ayat' => '1-20',
+            'ayat_mulai' => 1,
+            'ayat_selesai' => 20,
             'nilai' => 100.00,
         ];
         $response100 = $this->actingAs($ustadz)->post(route('ustadz.setoran-hafalan.store'), $payload100);
@@ -151,9 +174,9 @@ class B05_TahfidzRangeBoundaryTest extends TestCase
         $payload1001 = [
             'santri_id' => $santri->id,
             'tanggal' => now()->toDateString(),
-            'juz' => 4,
             'surat' => 'An-Nisa',
-            'ayat' => '1-10',
+            'ayat_mulai' => 1,
+            'ayat_selesai' => 10,
             'nilai' => 100.01,
         ];
         $response1001 = $this->actingAs($ustadz)->post(route('ustadz.setoran-hafalan.store'), $payload1001);
@@ -163,9 +186,9 @@ class B05_TahfidzRangeBoundaryTest extends TestCase
         $payloadNeg = [
             'santri_id' => $santri->id,
             'tanggal' => now()->toDateString(),
-            'juz' => 4,
             'surat' => 'An-Nisa',
-            'ayat' => '1-10',
+            'ayat_mulai' => 1,
+            'ayat_selesai' => 10,
             'nilai' => -1.00,
         ];
         $responseNeg = $this->actingAs($ustadz)->post(route('ustadz.setoran-hafalan.store'), $payloadNeg);
@@ -180,22 +203,21 @@ class B05_TahfidzRangeBoundaryTest extends TestCase
         [$ustadz, $santri] = $this->setupUstadzWithSantriBinaan();
 
         $invalidPayloads = [
-            'empty surat' => ['surat' => '', 'ayat' => '1-10'],
-            'whitespace surat' => ['surat' => '   ', 'ayat' => '1-10'],
-            'empty ayat' => ['surat' => 'Al-Baqarah', 'ayat' => ''],
-            'whitespace ayat' => ['surat' => 'Al-Baqarah', 'ayat' => '   '],
+            'empty surat' => ['surat' => '', 'ayat_mulai' => ''],
+            'whitespace surat' => ['surat' => '   ', 'ayat_mulai' => '   '],
+            'empty ayat' => ['surat' => 'Al-Baqarah', 'ayat_mulai' => ''],
+            'whitespace ayat' => ['surat' => 'Al-Baqarah', 'ayat_mulai' => '   '],
         ];
 
         foreach ($invalidPayloads as $desc => $fields) {
             $payload = array_merge([
                 'santri_id' => $santri->id,
                 'tanggal' => now()->toDateString(),
-                'juz' => 1,
                 'nilai' => 85.00,
             ], $fields);
 
             $response = $this->actingAs($ustadz)->post(route('ustadz.setoran-hafalan.store'), $payload);
-            $response->assertSessionHasErrors(array_keys($fields));
+            $response->assertSessionHasErrors(array_keys(array_filter($fields, fn ($v) => trim($v) === '')));
         }
     }
 
@@ -210,25 +232,29 @@ class B05_TahfidzRangeBoundaryTest extends TestCase
         $validMurojaah = [
             'santri_id' => $santri->id,
             'tanggal' => now()->toDateString(),
-            'juz' => 30,
             'surat' => 'An-Nas',
-            'ayat' => '1-6',
+            'ayat_mulai' => 1,
+            'ayat_selesai' => 6,
             'nilai' => 100.00,
         ];
         $responseValid = $this->actingAs($ustadz)->post(route('ustadz.murojaah.store'), $validMurojaah);
         $responseValid->assertSessionHasNoErrors();
         $this->assertDatabaseHas('murojaah', ['santri_id' => $santri->id, 'juz' => 30, 'nilai' => 100.00]);
 
-        // Invalid Murojaah: Juz 35 and Nilai 150
+        // Invalid Murojaah: An-Nas hanya 6 ayat dan Nilai 150
         $invalidMurojaah = [
             'santri_id' => $santri->id,
             'tanggal' => now()->toDateString(),
-            'juz' => 35,
             'surat' => 'An-Nas',
-            'ayat' => '1-6',
+            'ayat_mulai' => 1,
+            'ayat_selesai' => 7,
             'nilai' => 150.00,
         ];
         $responseInvalid = $this->actingAs($ustadz)->post(route('ustadz.murojaah.store'), $invalidMurojaah);
-        $responseInvalid->assertSessionHasErrors(['juz', 'nilai']);
+        $responseInvalid->assertSessionHasErrors(['nilai']);
+
+        $invalidMurojaah['nilai'] = 90;
+        $this->actingAs($ustadz)->post(route('ustadz.murojaah.store'), $invalidMurojaah)
+            ->assertSessionHasErrors(['ayat_selesai']);
     }
 }

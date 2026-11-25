@@ -61,9 +61,9 @@ class F37_MurojaahHafalanTest extends TestCase
         $payload = [
             'santri_id' => $santri->id,
             'tanggal' => '2026-11-12',
-            'juz' => 30,
             'surat' => 'An-Nazi\'at',
-            'ayat' => '1-46',
+            'ayat_mulai' => 1,
+            'ayat_selesai' => 46,
             'nilai' => 95.00,
             'status_selesai' => 1,
         ];
@@ -96,9 +96,9 @@ class F37_MurojaahHafalanTest extends TestCase
         $payload = [
             'santri_id' => $unassignedSantri->id,
             'tanggal' => '2026-11-12',
-            'juz' => 30,
             'surat' => 'Abasa',
-            'ayat' => '1-42',
+            'ayat_mulai' => 1,
+            'ayat_selesai' => 42,
             'nilai' => 90.00,
         ];
 
@@ -111,7 +111,7 @@ class F37_MurojaahHafalanTest extends TestCase
         $this->assertDatabaseMissing('murojaah', ['santri_id' => $unassignedSantri->id]);
     }
 
-    public function test_murojaah_validation_fails_on_invalid_juz_or_missing_surat(): void
+    public function test_murojaah_validation_fails_on_invalid_ayat_or_missing_surat(): void
     {
         $ustadz = $this->createUstadz();
         $santri = Santri::create(['nama' => 'Santri Murojaah Test', 'nis' => '2026062', 'tingkatan' => 'tsanawiyah']);
@@ -120,19 +120,26 @@ class F37_MurojaahHafalanTest extends TestCase
         $response = $this->actingAs($ustadz)->post(route('ustadz.murojaah.store'), [
             'santri_id' => $santri->id,
             'tanggal' => '2026-11-12',
-            'juz' => 35,
             'surat' => '',
-            'ayat' => '1-10',
+            'ayat_mulai' => '',
         ]);
 
-        $response->assertSessionHasErrors(['juz', 'surat']);
+        $response->assertSessionHasErrors(['surat', 'ayat_mulai']);
+
+        // An-Nas hanya 6 ayat
+        $this->actingAs($ustadz)->post(route('ustadz.murojaah.store'), [
+            'santri_id' => $santri->id,
+            'tanggal' => '2026-11-12',
+            'surat' => 'An-Nas',
+            'ayat_mulai' => 7,
+        ])->assertSessionHasErrors(['ayat_mulai']);
 
         $responseInvalidSurah = $this->actingAs($ustadz)->post(route('ustadz.murojaah.store'), [
             'santri_id' => $santri->id,
             'tanggal' => '2026-11-12',
-            'juz' => 1,
             'surat' => 'Surat Tidak Valid',
-            'ayat' => '1-10',
+            'ayat_mulai' => 1,
+            'ayat_selesai' => 10,
         ]);
 
         $responseInvalidSurah->assertSessionHasErrors(['surat']);

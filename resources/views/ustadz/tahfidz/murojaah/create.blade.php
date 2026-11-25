@@ -38,30 +38,7 @@
                         <input type="date" name="tanggal" id="tanggal" value="{{ old('tanggal', now()->toDateString()) }}" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-600 focus:ring-emerald-600 text-sm">
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                            <label for="juz" class="block text-sm font-medium text-gray-700">Juz (1 - 30) <span aria-hidden="true" class="text-red-600">*</span></label>
-                            <input type="number" inputmode="numeric" name="juz" id="juz" min="1" max="30" value="{{ old('juz') }}" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-600 focus:ring-emerald-600 text-sm">
-                        </div>
-
-                        <div>
-                            <label for="surat" class="block text-sm font-medium text-gray-700">Nama Surat <span aria-hidden="true" class="text-red-600">*</span></label>
-                            <select name="surat" id="surat" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-600 focus:ring-emerald-600 text-sm">
-                                <option value="">-- Pilih Nama Surat --</option>
-                                @foreach ($surahList as $index => $surah)
-                                    <option value="{{ $surah }}" {{ old('surat') === $surah ? 'selected' : '' }}>
-                                        {{ $index + 1 }}. {{ $surah }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            <x-input-error class="mt-2" :messages="$errors->get('surat')" />
-                        </div>
-
-                        <div>
-                            <label for="ayat" class="block text-sm font-medium text-gray-700">Ayat <span aria-hidden="true" class="text-red-600">*</span></label>
-                            <input type="text" name="ayat" id="ayat" value="{{ old('ayat') }}" required placeholder="Contoh: 1-30" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-600 focus:ring-emerald-600 text-sm">
-                        </div>
-                    </div>
+                    @include('ustadz.tahfidz._surat-ayat')
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
