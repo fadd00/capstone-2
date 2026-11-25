@@ -81,6 +81,11 @@ class UstadzController extends Controller
     {
         Role::firstOrCreate(['name' => 'ustadz', 'guard_name' => 'web']);
         $ustadz = User::role('ustadz')->findOrFail($id);
+
+        if ($reason = $ustadz->deletionBlockedReason()) {
+            return redirect()->route('admin.ustadz.index')->with('error', $reason);
+        }
+
         $ustadz->kegiatanPondok()->detach();
         $ustadz->santriBinaan()->detach();
         $ustadz->delete();

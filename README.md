@@ -83,6 +83,7 @@ npm run dev              # opsional, hot reload frontend (127.0.0.1:5173)
 |----------|--------|
 | `PESANTREN_LAT`, `PESANTREN_LNG` | Koordinat pesantren untuk presensi ustadz (Haversine) |
 | `PESANTREN_RADIUS` | Radius presensi dalam meter (default `150`) |
+| `ADMIN_EMAIL`, `ADMIN_PASSWORD` | Akun admin utama yang dibuat seeder (dilewati jika kosong; seeder ulang tidak mereset password) |
 | `MAIL_*` | Pengiriman email (default `MAIL_MAILER=log`, email tertulis di `storage/logs`) |
 
 ---

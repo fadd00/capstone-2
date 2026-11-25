@@ -27,6 +27,9 @@ class SeederIdempotencyTest extends TestCase
 
     public function test_seeders_are_fully_idempotent_and_leave_table_counts_unchanged(): void
     {
+        // Admin utama dari .env ikut dihitung (3 admin + 5 ustadz + 2 wali = 10 akun)
+        config(['app.admin_email' => 'utama@pptq.test', 'app.admin_password' => 'rahasia-uji-123']);
+
         // First execution of all seeders
         $firstExitCode = Artisan::call('db:seed');
         $this->assertSame(0, $firstExitCode, 'First execution of db:seed must succeed with exit code 0.');

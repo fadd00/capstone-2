@@ -2,6 +2,8 @@
 
 namespace Tests\Feature\Tier2_Boundary;
 
+use App\Models\Santri;
+use App\Models\SetoranHafalan;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Support\CreatesTestUsers;
@@ -109,5 +111,50 @@ class B06_SelfDeletionBoundaryTest extends TestCase
         $response = $this->actingAs($admin)->delete(route('admin.akun.destroy', 999999));
 
         $response->assertNotFound();
+    }
+
+    /**
+     * 6. Admin terakhir tidak bisa menghapus akunnya sendiri lewat halaman profil.
+     */
+    public function test_last_admin_cannot_delete_own_account_via_profile(): void
+    {
+        $admin = $this->createAdmin();
+
+        $this->actingAs($admin)->delete(route('profile.destroy'), ['password' => 'password123'])
+            ->assertSessionHasErrorsIn('userDeletion', ['password' => 'Tidak dapat menghapus satu-satunya administrator.']);
+
+        $this->assertNotNull($admin->fresh());
+        $this->assertAuthenticatedAs($admin);
+
+        // Dengan admin lain, penghapusan lewat profil tetap diizinkan.
+        $this->createAdmin();
+        $this->actingAs($admin)->delete(route('profile.destroy'), ['password' => 'password123'])
+            ->assertSessionHasNoErrors();
+        $this->assertNull($admin->fresh());
+    }
+
+    /**
+     * 7. Ustadz yang punya riwayat tidak bisa dihapus (profil maupun admin),
+     *    karena foreign key cascade akan ikut menghapus data santri.
+     */
+    public function test_ustadz_with_history_cannot_be_deleted_and_history_is_kept(): void
+    {
+        $admin = $this->createAdmin();
+        $ustadz = $this->createUstadz();
+        $santri = Santri::create(['nama' => 'Santri Riwayat', 'nis' => '2026901', 'tingkatan' => 'tsanawiyah']);
+        SetoranHafalan::create([
+            'santri_id' => $santri->id, 'ustadz_id' => $ustadz->id, 'tanggal' => '2026-11-20',
+            'juz' => 30, 'surat' => 'An-Naba', 'ayat' => '1-10',
+        ]);
+
+        $this->actingAs($ustadz)->delete(route('profile.destroy'), ['password' => 'password123'])
+            ->assertSessionHasErrorsIn('userDeletion', ['password']);
+
+        $this->actingAs($admin)->delete(route('admin.ustadz.destroy', $ustadz->id))
+            ->assertRedirect(route('admin.ustadz.index'))
+            ->assertSessionHas('error');
+
+        $this->assertNotNull($ustadz->fresh());
+        $this->assertDatabaseCount('setoran_hafalan', 1);
     }
 }

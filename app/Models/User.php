@@ -30,6 +30,25 @@ class User extends Authenticatable
         ];
     }
 
+    /**
+     * Alasan akun tidak boleh dihapus, atau null jika aman. Foreign key presensi,
+     * setoran, dan murojaah memakai cascade, jadi menghapus pemilik riwayat akan
+     * ikut menghapus data santri.
+     */
+    public function deletionBlockedReason(): ?string
+    {
+        if ($this->hasRole('admin') && self::role('admin')->count() <= 1) {
+            return 'Tidak dapat menghapus satu-satunya administrator.';
+        }
+
+        if ($this->presensiKegiatan()->exists() || $this->setoranHafalan()->exists() || $this->murojaah()->exists()) {
+            return 'Akun ini memiliki riwayat presensi, setoran, atau murojaah sehingga tidak dapat dihapus. '
+                .'Cabut penugasannya atau ganti password untuk menonaktifkan akun.';
+        }
+
+        return null;
+    }
+
     // Relasi Wali Murid -> Santri
     public function santriAsWali()
     {

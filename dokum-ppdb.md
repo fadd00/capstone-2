@@ -469,8 +469,7 @@ Kartu poin-poin keunggulan program pendidikan pesantren.
 * **`DatabaseSeeder`**:
   * Menggunakan `User::updateOrCreate(['role' => 'admin'], ...)` untuk mendaftarkan akun administrator default secara idempotensial:
     * Nama: `Administrator Utama`
-    * Email: `Muhammadiyah@gmail.com`
-    * Password: Terenkripsi bcrypt (`DiHati*2000#`)
+    * Email dan password: diambil dari `ADMIN_EMAIL` dan `ADMIN_PASSWORD` di `.env` (tidak disimpan di repository)
     * Status: `active`
   * Menjalankan pemanggilan ke `StatistikSeeder`.
 * **`StatistikSeeder`**:
@@ -1220,9 +1219,7 @@ VITE_APP_NAME="${APP_NAME}"
    ```bash
    php artisan migrate --seed
    ```
-   *Catatan:* Seeder akan otomatis membuat akun Admin:
-   * **Email:** `Muhammadiyah@gmail.com`
-   * **Password:** `DiHati*2000#`
+   *Catatan:* Seeder membuat akun Admin utama jika `ADMIN_EMAIL` dan `ADMIN_PASSWORD` diisi di `.env`.
 
 7. **Buat Symlink Storage Publik:**
    ```bash

@@ -72,14 +72,16 @@ class RbacMatrixTest extends TestCase
 
     public function test_seeders_correctly_assign_roles_to_seeded_users(): void
     {
+        config(['app.admin_email' => 'utama@pptq.test', 'app.admin_password' => 'rahasia-uji-123']);
+
         $this->seed(RoleSeeder::class);
         $this->seed(AdminUserSeeder::class);
         $this->seed(DemoPesantrenSeeder::class);
 
-        // Check Admins
-        $adminPpdb = User::where('email', 'Muhammadiyah@gmail.com')->first();
-        $this->assertNotNull($adminPpdb);
-        $this->assertTrue($adminPpdb->hasRole('admin'));
+        // Check Admins (admin utama dari .env/config)
+        $adminUtama = User::where('email', 'utama@pptq.test')->first();
+        $this->assertNotNull($adminUtama);
+        $this->assertTrue($adminUtama->hasRole('admin'));
 
         $adminPesantren = User::where('email', 'admin@ibnujuraimi.sch.id')->first();
         $this->assertNotNull($adminPesantren);

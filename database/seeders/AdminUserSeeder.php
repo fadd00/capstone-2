@@ -10,16 +10,20 @@ class AdminUserSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. Primary Admin PPDB (dokum-ppdb.md §4.3)
-        $adminPpdb = User::updateOrCreate(
-            ['email' => 'Muhammadiyah@gmail.com'],
-            [
-                'name' => 'Administrator Utama',
-                'password' => Hash::make('DiHati*2000#'),
-                'email_verified_at' => now(),
-            ]
-        );
-        $adminPpdb->syncRoles(['admin']);
+        // 1. Admin utama dari .env (ADMIN_EMAIL / ADMIN_PASSWORD), tanpa kredensial di repo.
+        //    firstOrCreate: menjalankan ulang seeder tidak mereset password yang sudah diganti.
+        $email = config('app.admin_email');
+        $password = config('app.admin_password');
+        if ($email && $password) {
+            User::firstOrCreate(
+                ['email' => $email],
+                [
+                    'name' => 'Administrator Utama',
+                    'password' => Hash::make($password),
+                    'email_verified_at' => now(),
+                ]
+            )->syncRoles(['admin']);
+        }
 
         // 2. Admin Pesantren (Strict Build Plan & SCOPE.md)
         $adminPesantren = User::updateOrCreate(

@@ -48,6 +48,10 @@ class ProfileController extends Controller
 
         $user = $request->user();
 
+        if ($reason = $user->deletionBlockedReason()) {
+            return back()->withErrors(['password' => $reason], 'userDeletion');
+        }
+
         Auth::logout();
 
         $user->delete();
