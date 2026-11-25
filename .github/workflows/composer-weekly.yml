@@ -1,0 +1,37 @@
+name: Weekly Composer Update
+
+on:
+  schedule:
+    - cron: '0 7 * * 1'
+  workflow_dispatch:
+
+jobs:
+  update-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: pdo_sqlite
+          coverage: none
+          tools: composer:v2
+
+      - name: Prepare environment
+        run: cp .env.example .env
+
+      - name: Update Composer dependencies
+        run: composer update --no-interaction --prefer-dist
+
+      - name: Audit dependencies
+        run: composer audit --no-interaction
+
+      - name: Generate application key
+        run: php artisan key:generate --force
+
+      - name: Run tests
+        run: php artisan test
