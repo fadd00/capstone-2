@@ -42,7 +42,8 @@ class SecurityHeaders
             "script-src {$scriptSrc}",
             "style-src {$styleSrc}",
             "font-src 'self' https://fonts.bunny.net",
-            "img-src 'self' data:",
+            // blob: untuk pratinjau foto bukti presensi (URL.createObjectURL)
+            "img-src 'self' data: blob:",
             "connect-src {$connectSrc}",
             "form-action 'self'",
             "base-uri 'self'",

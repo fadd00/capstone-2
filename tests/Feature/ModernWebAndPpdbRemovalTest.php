@@ -50,6 +50,7 @@ class ModernWebAndPpdbRemovalTest extends TestCase
         $response->assertHeader('Cross-Origin-Opener-Policy', 'same-origin');
         $response->assertHeader('Cross-Origin-Resource-Policy', 'same-origin');
         $this->assertStringContainsString("frame-ancestors 'none'", (string) $response->headers->get('Content-Security-Policy'));
+        $this->assertStringContainsString("img-src 'self' data: blob:", (string) $response->headers->get('Content-Security-Policy'));
         $this->assertStringContainsString('geolocation=(self)', (string) $response->headers->get('Permissions-Policy'));
 
         $response->assertSee('<html lang="id">', false);
