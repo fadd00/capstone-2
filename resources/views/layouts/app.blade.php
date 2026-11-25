@@ -7,6 +7,7 @@
 
         <title>{{ $title ? $title . ' | ' . config('app.name', 'SIM PPTQ Ibnu Juraimi') : config('app.name', 'SIM PPTQ Ibnu Juraimi') }}</title>
 
+        <link rel="icon" type="image/png" href="{{ asset('images/logo-ibnu-juraimi.png') }}">
         <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
         <link href="https://fonts.bunny.net/css?family=plus-jakarta-sans:400,500,600,700&display=swap" rel="stylesheet">
 
@@ -33,7 +34,10 @@
                         </button>
                         <div class="min-w-0">
                             <span class="hidden lg:block text-xs font-medium uppercase tracking-[0.16em] text-slate-400">Portal Digital Pesantren</span>
-                            <span class="lg:hidden font-semibold text-sm text-blue-900 truncate">PPTQ Ibnu Juraimi</span>
+                            <span class="lg:hidden flex items-center gap-2 font-semibold text-sm text-blue-900 truncate">
+                                <img src="{{ asset('images/logo-ibnu-juraimi.png') }}" alt="" width="300" height="247" class="logo-on-light h-8 w-auto shrink-0">
+                                PPTQ Ibnu Juraimi
+                            </span>
                         </div>
                     </div>
 

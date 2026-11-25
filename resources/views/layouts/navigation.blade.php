@@ -69,11 +69,7 @@
        class="app-sidebar fixed inset-y-0 left-0 z-40 w-72 bg-white border-r border-slate-200 flex flex-col -translate-x-full transition-transform duration-200 lg:translate-x-0 lg:static lg:inset-auto">
     <div class="h-20 px-5 border-b border-slate-100 flex items-center justify-between shrink-0">
         <a href="{{ route('dashboard') }}" class="flex items-center gap-3 min-w-0">
-            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-sm shadow-blue-600/20">
-                <svg class="h-5 w-5" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 19.5A2.5 2.5 0 016.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" />
-                </svg>
-            </span>
+            <img src="{{ asset('images/logo-ibnu-juraimi.png') }}" alt="" width="300" height="247" class="logo-on-light h-11 w-auto shrink-0">
             <span class="min-w-0">
                 <span class="block truncate text-sm font-bold text-blue-950">PPTQ Ibnu Juraimi</span>
                 <span class="block truncate text-[11px] font-medium text-slate-400">Sistem Informasi Pesantren</span>
