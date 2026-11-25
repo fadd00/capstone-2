@@ -8,6 +8,7 @@ use App\Models\SetoranHafalan;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class TahfidzController extends Controller
@@ -27,8 +28,9 @@ class TahfidzController extends Controller
     public function createSetoran(Request $request): View
     {
         $santriBinaan = $request->user()->santriBinaan()->orderBy('nama')->get();
+        $surahList = config('quran.surah');
 
-        return view('ustadz.tahfidz.setoran.create', compact('santriBinaan'));
+        return view('ustadz.tahfidz.setoran.create', compact('santriBinaan', 'surahList'));
     }
 
     public function storeSetoran(Request $request): RedirectResponse
@@ -37,7 +39,7 @@ class TahfidzController extends Controller
             'santri_id' => ['required', 'integer', 'exists:santri,id'],
             'tanggal' => ['required', 'date'],
             'juz' => ['required', 'integer', 'min:1', 'max:30'],
-            'surat' => ['required', 'string', 'max:100'],
+            'surat' => ['required', 'string', 'max:100', Rule::in(config('quran.surah'))],
             'ayat' => ['required', 'string', 'max:50'],
             'nilai' => ['nullable', 'numeric', 'min:0', 'max:100'],
             'status_selesai' => ['nullable', 'boolean'],
@@ -100,8 +102,9 @@ class TahfidzController extends Controller
     public function createMurojaah(Request $request): View
     {
         $santriBinaan = $request->user()->santriBinaan()->orderBy('nama')->get();
+        $surahList = config('quran.surah');
 
-        return view('ustadz.tahfidz.murojaah.create', compact('santriBinaan'));
+        return view('ustadz.tahfidz.murojaah.create', compact('santriBinaan', 'surahList'));
     }
 
     public function storeMurojaah(Request $request): RedirectResponse
@@ -110,7 +113,7 @@ class TahfidzController extends Controller
             'santri_id' => ['required', 'integer', 'exists:santri,id'],
             'tanggal' => ['required', 'date'],
             'juz' => ['required', 'integer', 'min:1', 'max:30'],
-            'surat' => ['required', 'string', 'max:100'],
+            'surat' => ['required', 'string', 'max:100', Rule::in(config('quran.surah'))],
             'ayat' => ['required', 'string', 'max:50'],
             'nilai' => ['nullable', 'numeric', 'min:0', 'max:100'],
             'status_selesai' => ['nullable', 'boolean'],
