@@ -12,6 +12,7 @@
         "laravel/framework": "^13.0",
         "laravel/tinker": "^3.0",
         "maatwebsite/excel": "^4.0",
+        "predis/predis": "^3.8",
         "spatie/laravel-permission": "^8.0"
     },
     "require-dev": {
@@ -69,6 +70,11 @@
         "optimize-autoloader": true,
         "preferred-install": "dist",
         "sort-packages": true,
+        "policy": {
+            "advisories": {
+                "block": false
+            }
+        },
         "allow-plugins": {
             "pestphp/pest-plugin": true,
             "php-http/discovery": true
