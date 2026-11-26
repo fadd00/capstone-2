@@ -15,6 +15,11 @@
             @if(session('success'))
                 <div role="status" aria-live="polite" class="p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-lg text-sm">{{ session('success') }}</div>
             @endif
+            @if ($errors->any())
+                <div role="alert" class="p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">{{ $errors->first() }}</div>
+            @elseif ($session->status === 'invalid')
+                <div role="alert" class="p-4 bg-amber-50 border border-amber-200 text-amber-800 rounded-lg text-sm">Check-in sesi ini berada di luar radius pesantren, sehingga presensi santri tidak dapat disimpan.</div>
+            @endif
 
             <div class="bg-white p-6 shadow-sm border border-gray-200 sm:rounded-lg">
                 <dl class="mb-6 p-4 bg-gray-50 border rounded-lg text-sm text-gray-700 flex flex-wrap gap-6">

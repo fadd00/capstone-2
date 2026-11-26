@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Ustadz;
 use App\Http\Controllers\Controller;
 use App\Models\PresensiKegiatan;
 use App\Models\PresensiSantri;
-use App\Models\Santri;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,16 +20,7 @@ class PresensiSantriController extends Controller
             abort(403, 'Akses tidak sah ke sesi presensi ustadz lain.');
         }
 
-        $query = Santri::query();
-        if ($session->kegiatanPondok) {
-            if ($session->kegiatanPondok->tingkatan && $session->kegiatanPondok->tingkatan !== 'semua') {
-                $query->where('tingkatan', $session->kegiatanPondok->tingkatan);
-            }
-            if ($session->kegiatanPondok->kelas) {
-                $query->where('kelas', $session->kegiatanPondok->kelas);
-            }
-        }
-        $santriList = $query->orderBy('nama')->get();
+        $santriList = $session->kegiatanPondok->santriPeserta()->orderBy('nama')->get();
 
         $existingAttendance = PresensiSantri::where('presensi_kegiatan_id', $session->id)
             ->pluck('status', 'santri_id')
@@ -41,10 +31,14 @@ class PresensiSantriController extends Controller
 
     public function store(Request $request, int $session_id): RedirectResponse
     {
-        $session = PresensiKegiatan::findOrFail($session_id);
+        $session = PresensiKegiatan::with('kegiatanPondok')->findOrFail($session_id);
 
         if ($session->ustadz_id !== Auth::id() && ! Auth::user()->hasRole('admin')) {
             abort(403, 'Akses tidak sah ke sesi presensi ustadz lain.');
+        }
+
+        if ($session->status === 'invalid') {
+            return back()->withErrors(['presensi' => 'Sesi ini berada di luar radius pesantren sehingga presensi santri tidak dapat dicatat.']);
         }
 
         $rules = [];
@@ -63,8 +57,8 @@ class PresensiSantriController extends Controller
         $attendanceData = $request->input('presensi', $request->input('kehadiran', []));
         $santriIds = array_map('intval', array_keys($attendanceData));
 
-        if (Santri::whereIn('id', $santriIds)->count() !== count(array_unique($santriIds))) {
-            return back()->withErrors(['presensi' => 'Terdapat ID santri yang tidak valid.']);
+        if ($session->kegiatanPondok->santriPeserta()->whereIn('id', $santriIds)->count() !== count(array_unique($santriIds))) {
+            return back()->withErrors(['presensi' => 'Terdapat santri yang tidak valid atau bukan peserta kegiatan ini.']);
         }
 
         foreach ($attendanceData as $santriId => $status) {

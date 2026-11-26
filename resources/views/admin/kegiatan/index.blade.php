@@ -15,6 +15,9 @@
             @if(session('success'))
                 <div role="status" aria-live="polite" class="p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-lg text-sm">{{ session('success') }}</div>
             @endif
+            @if(session('error'))
+                <div role="alert" class="p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">{{ session('error') }}</div>
+            @endif
 
             <div class="bg-white p-6 shadow-sm border border-gray-200 sm:rounded-lg">
                 <div class="responsive-table-wrapper" tabindex="0" role="region" aria-labelledby="kegiatan-table-caption">

@@ -48,6 +48,13 @@
                         </dd>
                     </div>
                 </dl>
+
+                <section class="border-t pt-4">
+                    <h3 class="text-gray-500 text-xs mb-1">Catatan Ustadz</h3>
+                    <p class="text-sm text-gray-800 italic bg-gray-50 p-4 rounded-md border border-gray-100">
+                        {{ $murojaah->catatan ?: 'Tidak ada catatan.' }}
+                    </p>
+                </section>
             </div>
         </div>
     </div>

@@ -28,7 +28,7 @@ class PenugasanKegiatanController extends Controller
             'kegiatan_ids.*' => ['exists:kegiatan_pondok,id'],
         ]);
 
-        $ustadz = User::findOrFail($id);
+        $ustadz = User::role('ustadz')->findOrFail($id);
         $ustadz->kegiatanPondok()->sync($request->input('kegiatan_ids', []));
 
         return redirect()->back()->with('success', 'Penugasan kegiatan berhasil disimpan.');

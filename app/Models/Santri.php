@@ -52,4 +52,12 @@ class Santri extends Model
     {
         return $this->hasMany(Murojaah::class, 'santri_id');
     }
+
+    /** Presensi, setoran, dan murojaah ter-cascade saat santri dihapus, jadi santri dengan riwayat ditolak. */
+    public function deletionBlockedReason(): ?string
+    {
+        return $this->presensiSantri()->exists() || $this->setoranHafalan()->exists() || $this->murojaah()->exists()
+            ? 'Santri ini sudah memiliki riwayat presensi, setoran, atau murojaah sehingga tidak dapat dihapus.'
+            : null;
+    }
 }

@@ -70,6 +70,11 @@ class KegiatanController extends Controller
     public function destroy(int $id): RedirectResponse
     {
         $kegiatan = KegiatanPondok::findOrFail($id);
+
+        if ($reason = $kegiatan->deletionBlockedReason()) {
+            return redirect()->route('admin.kegiatan.index')->with('error', $reason);
+        }
+
         $kegiatan->ustadz()->detach();
         $kegiatan->delete();
 

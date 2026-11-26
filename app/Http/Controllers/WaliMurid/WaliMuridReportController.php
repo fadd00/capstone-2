@@ -68,6 +68,13 @@ class WaliMuridReportController extends Controller
 
     private function resolveAllowedSantri(Request $request): array
     {
+        $request->validate([
+            'santri_id' => ['nullable', 'integer'],
+            'tanggal_mulai' => ['nullable', 'date'],
+            'tanggal_selesai' => ['nullable', 'date'],
+            'bulan' => ['nullable', 'date_format:Y-m'],
+        ]);
+
         $children = Santri::where('wali_murid_id', auth()->id())->get();
         $mySantriIds = $children->pluck('id')->all();
 

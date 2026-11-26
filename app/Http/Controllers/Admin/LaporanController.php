@@ -20,6 +20,8 @@ class LaporanController extends Controller
 {
     public function presensiUstadz(Request $request)
     {
+        $this->validateFilters($request);
+
         $presensiList = $this->getPresensiUstadzQuery($request)->get();
         $ustadzList = User::role('ustadz')->orderBy('name')->get();
         $kegiatanList = KegiatanPondok::orderBy('nama_kegiatan')->get();
@@ -29,6 +31,8 @@ class LaporanController extends Controller
 
     public function presensiSantri(Request $request)
     {
+        $this->validateFilters($request);
+
         $presensiSantriList = $this->getPresensiSantriQuery($request)->get();
         $santriList = Santri::orderBy('nama')->get();
         $kegiatanList = KegiatanPondok::orderBy('nama_kegiatan')->get();
@@ -38,6 +42,8 @@ class LaporanController extends Controller
 
     public function hafalan(Request $request)
     {
+        $this->validateFilters($request);
+
         $hafalanList = $this->getHafalanQuery($request)->get();
         $santriList = Santri::orderBy('nama')->get();
         $ustadzList = User::role('ustadz')->orderBy('name')->get();
@@ -47,6 +53,8 @@ class LaporanController extends Controller
 
     public function murojaah(Request $request)
     {
+        $this->validateFilters($request);
+
         $murojaahList = $this->getMurojaahQuery($request)->get();
         $santriList = Santri::orderBy('nama')->get();
         $ustadzList = User::role('ustadz')->orderBy('name')->get();
@@ -56,6 +64,8 @@ class LaporanController extends Controller
 
     public function export(Request $request)
     {
+        $this->validateFilters($request);
+
         $laporan = $request->query('laporan', 'presensi-ustadz');
         $format = $request->query('format', 'pdf');
 
@@ -85,6 +95,21 @@ class LaporanController extends Controller
         ])->setPaper('a4', 'landscape');
 
         return $pdf->download("laporan-{$laporan}.pdf");
+    }
+
+    /** Validasi filter laporan; filter berbentuk array/teks acak sebelumnya memicu error 500. */
+    protected function validateFilters(Request $request): void
+    {
+        $request->validate([
+            'bulan' => ['nullable', 'date_format:Y-m'],
+            'ustadz_id' => ['nullable', 'integer'],
+            'santri_id' => ['nullable', 'integer'],
+            'kegiatan_pondok_id' => ['nullable', 'integer'],
+            'status' => ['nullable', 'in:hadir,izin,sakit,alpha'],
+            'tingkatan' => ['nullable', 'in:tsanawiyah,aliyah,takhassus'],
+            'laporan' => ['nullable', 'in:presensi-ustadz,presensi-santri,hafalan,murojaah'],
+            'format' => ['nullable', 'in:pdf,excel'],
+        ]);
     }
 
     protected function getPresensiUstadzQuery(Request $request)

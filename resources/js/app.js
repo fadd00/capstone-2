@@ -357,11 +357,39 @@ function initCheckinPhotoPreview() {
         container.classList.add('hidden');
     };
 
-    input.addEventListener('change', () => {
-        const photo = input.files?.[0];
+    // Foto kamera HP sering > 2 MB (batas server & upload_max_filesize PHP); perkecil dulu di browser.
+    const MAX_BYTES = 1.5 * 1024 * 1024;
+    const MAX_SIDE = 1600;
+    const shrink = async (file) => {
+        if (file.size <= MAX_BYTES || typeof createImageBitmap !== 'function') return file;
+        try {
+            const bitmap = await createImageBitmap(file);
+            const scale = Math.min(1, MAX_SIDE / Math.max(bitmap.width, bitmap.height));
+            const canvas = document.createElement('canvas');
+            canvas.width = Math.round(bitmap.width * scale);
+            canvas.height = Math.round(bitmap.height * scale);
+            canvas.getContext('2d').drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+            const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', 0.82));
+            if (!blob || blob.size >= file.size) return file;
+            return new File([blob], file.name.replace(/\.\w+$/, '') + '.jpg', { type: 'image/jpeg' });
+        } catch {
+            return file; // gagal memproses: kirim apa adanya, server tetap memvalidasi ukuran
+        }
+    };
+
+    input.addEventListener('change', async () => {
+        let photo = input.files?.[0];
         if (!photo) {
             clearPhoto();
             return;
+        }
+
+        const smaller = await shrink(photo);
+        if (smaller !== photo) {
+            const files = new DataTransfer();
+            files.items.add(smaller);
+            input.files = files.files;
+            photo = smaller;
         }
 
         if (previewUrl) URL.revokeObjectURL(previewUrl);

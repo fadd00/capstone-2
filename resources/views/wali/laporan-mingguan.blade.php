@@ -98,6 +98,7 @@
                                     <th scope="col" class="px-4 py-3">Juz / Surat / Ayat</th>
                                     <th scope="col" class="px-4 py-3">Nilai</th>
                                     <th scope="col" class="px-4 py-3">Ustadz Pembimbing</th>
+                                    <th scope="col" class="px-4 py-3">Catatan</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200 bg-white">
@@ -108,10 +109,11 @@
                                         <td data-label="Juz / Surat / Ayat" class="px-4 py-3 font-semibold text-gray-800">{{ $murojaah->surat }} (Juz {{ $murojaah->juz }}, Ayat {{ $murojaah->ayat }})</td>
                                         <td data-label="Nilai" class="px-4 py-3 font-bold text-green-700">{{ $murojaah->nilai }}</td>
                                         <td data-label="Ustadz Pembimbing" class="px-4 py-3">{{ $murojaah->ustadz->name ?? '-' }}</td>
+                                        <td data-label="Catatan" class="px-4 py-3 italic text-gray-600">{{ $murojaah->catatan ?? '-' }}</td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="5" class="px-4 py-6 text-center text-gray-500">Tidak ada riwayat murojaah pada periode ini.</td>
+                                        <td colspan="6" class="px-4 py-6 text-center text-gray-500">Tidak ada riwayat murojaah pada periode ini.</td>
                                     </tr>
                                 @endforelse
                             </tbody>

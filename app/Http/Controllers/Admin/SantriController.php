@@ -15,6 +15,7 @@ class SantriController extends Controller
 {
     public function index(Request $request): View
     {
+        $request->validate(['search' => ['nullable', 'string', 'max:100']]);
         $query = Santri::with(['waliMurid', 'ustadzPembina']);
 
         if ($request->filled('search')) {
@@ -46,7 +47,7 @@ class SantriController extends Controller
             'nis' => ['required', 'string', 'max:50', 'unique:santri,nis'],
             'tingkatan' => ['required', 'in:tsanawiyah,aliyah,takhassus'],
             'kelas' => ['nullable', 'string', 'max:50'],
-            'wali_murid_id' => ['nullable', 'exists:users,id'],
+            'wali_murid_id' => ['nullable', Rule::in(User::whereHas('roles', fn ($q) => $q->where('name', 'wali_murid'))->pluck('id'))],
             'tanggal_lahir' => ['nullable', 'date'],
         ]);
 
@@ -84,7 +85,7 @@ class SantriController extends Controller
             'nis' => ['required', 'string', 'max:50', Rule::unique('santri', 'nis')->ignore($santri->id)],
             'tingkatan' => ['required', 'in:tsanawiyah,aliyah,takhassus'],
             'kelas' => ['nullable', 'string', 'max:50'],
-            'wali_murid_id' => ['nullable', 'exists:users,id'],
+            'wali_murid_id' => ['nullable', Rule::in(User::whereHas('roles', fn ($q) => $q->where('name', 'wali_murid'))->pluck('id'))],
             'tanggal_lahir' => ['nullable', 'date'],
         ]);
 
@@ -100,6 +101,11 @@ class SantriController extends Controller
     public function destroy(int $id): RedirectResponse
     {
         $santri = Santri::findOrFail($id);
+
+        if ($reason = $santri->deletionBlockedReason()) {
+            return redirect()->route('admin.santri.index')->with('error', $reason);
+        }
+
         $santri->ustadzPembina()->detach();
         $santri->delete();
 

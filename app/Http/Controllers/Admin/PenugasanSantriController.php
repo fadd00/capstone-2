@@ -28,7 +28,7 @@ class PenugasanSantriController extends Controller
             'santri_ids.*' => ['exists:santri,id'],
         ]);
 
-        $ustadz = User::findOrFail($id);
+        $ustadz = User::role('ustadz')->findOrFail($id);
         $ustadz->santriBinaan()->sync($request->input('santri_ids', []));
 
         return redirect()->back()->with('success', 'Penugasan santri binaan berhasil disimpan.');

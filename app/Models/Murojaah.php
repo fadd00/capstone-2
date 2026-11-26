@@ -20,6 +20,7 @@ class Murojaah extends Model
         'ayat',
         'nilai',
         'status_selesai',
+        'catatan',
     ];
 
     protected function casts(): array

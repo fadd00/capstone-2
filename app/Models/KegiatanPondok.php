@@ -28,4 +28,20 @@ class KegiatanPondok extends Model
     {
         return $this->hasMany(PresensiKegiatan::class, 'kegiatan_pondok_id');
     }
+
+    /** Sesi presensi ter-cascade saat kegiatan dihapus, jadi kegiatan dengan riwayat ditolak. */
+    public function deletionBlockedReason(): ?string
+    {
+        return $this->presensiKegiatan()->exists()
+            ? 'Kegiatan ini sudah memiliki riwayat presensi sehingga tidak dapat dihapus.'
+            : null;
+    }
+
+    /** Santri yang menjadi peserta kegiatan ini (sesuai tingkatan dan kelas). */
+    public function santriPeserta()
+    {
+        return Santri::query()
+            ->when($this->tingkatan && $this->tingkatan !== 'semua', fn ($q) => $q->where('tingkatan', $this->tingkatan))
+            ->when($this->kelas, fn ($q) => $q->where('kelas', $this->kelas));
+    }
 }

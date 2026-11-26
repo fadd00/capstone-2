@@ -40,10 +40,7 @@ class TahfidzController extends Controller
 
     public function storeSetoran(Request $request): RedirectResponse
     {
-        $data = $this->validatedTahfidz($request);
-        $data['catatan'] = $request->input('catatan'); // sudah divalidasi di validatedTahfidz()
-
-        SetoranHafalan::create($data);
+        SetoranHafalan::create($this->validatedTahfidz($request));
 
         return redirect()->route('ustadz.setoran-hafalan.index')->with('success', 'Setoran hafalan baru berhasil dicatat.');
     }
@@ -134,6 +131,7 @@ class TahfidzController extends Controller
             'ayat' => $mulai === $selesai ? (string) $mulai : "{$mulai}-{$selesai}",
             'nilai' => $validated['nilai'] ?? null,
             'status_selesai' => (bool) ($validated['status_selesai'] ?? false),
+            'catatan' => $validated['catatan'] ?? null,
         ];
     }
 
