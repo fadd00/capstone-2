@@ -1,7 +1,7 @@
 ## Ringkasan Perubahan
 
-- **Tema visual:** putih dan slate-50 sebagai permukaan, biru sebagai warna aksi dan navigasi, Plus Jakarta Sans, sudut membulat, serta bayangan ringan.
-- **Portal setelah login:** sidebar responsif per role, header akun, indikator menu aktif, serta gaya bersama untuk tabel, form, tombol, dan kartu.
+- **Tema visual:** sidebar navy glassy dengan aksen emas pesantren; kanvas utama bergradasi slate-biru, ambient orbs berpola geometris ber-parallax, serta kartu dashboard putih semi-transparan dengan aksen royal blue, teal, dan gold.
+- **Portal setelah login:** sidebar responsif per role, topbar kaca tipis, header akun, indikator menu aktif, serta gaya global untuk kartu, form, tabel, status, tombol, dan empty state di seluruh halaman yang memakai layout aplikasi. Dashboard Admin, Ustadz, dan Wali Murid tersedia; view khusus Calon Santri belum ada di repository, dan halaman wali berada di `resources/views/wali`.
 - **Portal masuk:** panel login responsif dengan pengenalan pesantren pada layar lebar; tampilan ringkas tetap digunakan pada layar kecil.
 - **Animasi:** Lenis untuk smooth scroll, GSAP dan ScrollTrigger untuk reveal judul/kartu/baris tabel/form, serta Motion untuk interaksi tombol, kartu, dialog, dan drawer sidebar.
 - **Aksesibilitas:** animasi dikurangi saat `prefers-reduced-motion` aktif; navigasi keyboard, skip link, modal native, dan status form yang telah ada tetap didukung.
@@ -28,4 +28,4 @@ Pemeriksaan visual yang disarankan:
 4. Di halaman presensi santri, pastikan pilihan Hadir/Izin/Sakit/Alpha dan submit presensi tetap berfungsi.
 5. Uji drawer mobile, dropdown akun, dialog konfirmasi, dan pengaturan `prefers-reduced-motion`.
 
-Build Vite dan kompilasi Blade telah berhasil dijalankan untuk perubahan ini. Suite `php artisan test` yang ada belum bersih: terdapat peringatan file test didaftarkan ke suite lebih dari sekali dan kegagalan test yang merujuk kelas layanan yang tidak ditemukan (`FonnteService` dan `PendaftarPromotionService`). Kegagalan tersebut tidak berasal dari perubahan frontend; jalankan ulang dan tinjau hasilnya sebelum menggabungkan perubahan ke branch utama.
+Verifikasi perubahan dashboard: `npm run build`, `php artisan view:cache`, dan `php artisan test` berhasil; suite test melaporkan 247 test lulus dengan 1.101 assertion.

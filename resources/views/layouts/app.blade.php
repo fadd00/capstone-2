@@ -20,7 +20,7 @@
             @include('layouts.navigation')
 
             <div id="app-shell" class="flex-1 min-w-0 flex flex-col">
-                <div class="app-topbar h-16 bg-white/90 border-b border-slate-200 px-4 sm:px-6 lg:px-8 flex items-center justify-between sticky top-0 z-20 backdrop-blur">
+                <div class="app-topbar h-16 bg-white/80 border-b border-slate-200/80 px-4 sm:px-6 lg:px-8 flex items-center justify-between sticky top-0 z-20 backdrop-blur-md">
                     <div class="flex items-center gap-3 min-w-0">
                         <button id="sidebar-open-btn"
                                 type="button"

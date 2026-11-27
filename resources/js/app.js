@@ -579,7 +579,7 @@ function initDashboardParallax() {
     if (!main) return;
 
     const depthTargets = document.querySelectorAll(
-        '.app-page-header, #main-content [class*="grid"] > a, #main-content [class*="grid"] > article, #main-content [class*="grid"] > div[class*="border"], #main-content article'
+        '.app-page-header, #main-content [class*="grid"] > a, #main-content [class*="grid"] > article, #main-content [class*="grid"] > div[class*="border"], #main-content article, #main-content .max-w-7xl > [class~="bg-white"], #main-content .max-w-4xl > [class~="bg-white"], #main-content .max-w-3xl > [class~="bg-white"], #main-content .responsive-table-wrapper, #main-content section[aria-labelledby]'
     );
     let frame = 0;
 
