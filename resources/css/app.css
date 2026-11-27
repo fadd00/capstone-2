@@ -98,7 +98,55 @@
 
 /* Shared application shell */
 .app-sidebar {
-    box-shadow: 8px 0 32px rgb(15 23 42 / 0.025);
+    background: linear-gradient(160deg, rgb(30 58 138 / 0.96), rgb(23 37 84 / 0.95) 58%, rgb(15 35 84 / 0.97));
+    border-color: rgb(191 219 254 / 0.24);
+    box-shadow: 12px 0 36px rgb(15 23 42 / 0.18), inset -1px 0 0 rgb(255 255 255 / 0.06);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+}
+
+.app-sidebar > div {
+    border-color: rgb(191 219 254 / 0.2);
+}
+
+.app-sidebar .text-blue-950 {
+    color: #ffffff;
+}
+
+.app-sidebar .text-slate-400 {
+    color: #bfdbfe;
+}
+
+.app-sidebar .app-nav-link {
+    color: #dbeafe;
+}
+
+.app-sidebar .app-nav-link:hover {
+    background-color: rgb(255 255 255 / 0.12);
+    color: #ffffff;
+}
+
+.app-sidebar .app-nav-link[aria-current="page"] {
+    background-color: rgb(147 197 253 / 0.2);
+    color: #eff6ff;
+    box-shadow: inset 3px 0 0 #93c5fd, inset 0 0 0 1px rgb(191 219 254 / 0.2);
+}
+
+.app-sidebar .app-nav-link .bg-blue-600 {
+    background-color: #bfdbfe;
+}
+
+.app-sidebar .app-nav-link .bg-slate-300 {
+    background-color: rgb(219 234 254 / 0.56);
+}
+
+.app-sidebar button {
+    color: #dbeafe;
+}
+
+.app-sidebar button:hover {
+    background-color: rgb(255 255 255 / 0.12);
+    color: #ffffff;
 }
 
 .app-nav-link[aria-current="page"] {
@@ -119,6 +167,33 @@
 .app-main > div {
     padding-top: 1.5rem;
     padding-bottom: 3rem;
+}
+
+.app-main {
+    position: relative;
+    isolation: isolate;
+}
+
+.app-main::before {
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    content: "";
+    pointer-events: none;
+    background:
+        radial-gradient(ellipse at 82% 4%, rgb(191 219 254 / 0.36), transparent 34rem),
+        radial-gradient(ellipse at 8% 30%, rgb(219 234 254 / 0.32), transparent 30rem),
+        linear-gradient(135deg, rgb(248 250 252 / 0.4), rgb(239 246 255 / 0.48));
+    transform: translate3d(0, var(--ambient-parallax-y, 0px), 0);
+    will-change: transform;
+}
+
+.app-page-header,
+.app-main [class*="grid"] > a,
+.app-main [class*="grid"] > article,
+.app-main [class*="grid"] > div[class*="border"],
+.app-main article {
+    translate: 0 var(--parallax-depth-y, 0px);
 }
 
 .app-main .max-w-7xl,

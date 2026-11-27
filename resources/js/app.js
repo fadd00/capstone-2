@@ -572,6 +572,40 @@ function initPageAnimations() {
     window.addEventListener('load', () => ScrollTrigger.refresh(), { once: true });
 }
 
+function initDashboardParallax() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const main = document.querySelector('.app-main');
+    if (!main) return;
+
+    const depthTargets = document.querySelectorAll(
+        '.app-page-header, #main-content [class*="grid"] > a, #main-content [class*="grid"] > article, #main-content [class*="grid"] > div[class*="border"], #main-content article'
+    );
+    let frame = 0;
+
+    const updateParallax = () => {
+        main.style.setProperty('--ambient-parallax-y', `${Math.min(window.scrollY * 0.12, 64)}px`);
+
+        const viewportCenter = window.innerHeight / 2;
+        depthTargets.forEach((element) => {
+            const bounds = element.getBoundingClientRect();
+            const distanceFromCenter = viewportCenter - (bounds.top + bounds.height / 2);
+            const depth = Math.max(-8, Math.min(8, distanceFromCenter * 0.012));
+            element.style.setProperty('--parallax-depth-y', `${depth}px`);
+        });
+
+        frame = 0;
+    };
+
+    const scheduleParallax = () => {
+        if (!frame) frame = window.requestAnimationFrame(updateParallax);
+    };
+
+    window.addEventListener('scroll', scheduleParallax, { passive: true });
+    window.addEventListener('resize', scheduleParallax, { passive: true });
+    scheduleParallax();
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     initConfirmDialog();
     initAppModals();
@@ -583,5 +617,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initCheckinPhotoPreview();
     initTahfidzRange();
     initPageAnimations();
+    initDashboardParallax();
     initMotionInteractions();
 });
