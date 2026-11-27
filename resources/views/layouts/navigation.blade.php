@@ -66,7 +66,7 @@
 <!-- Sidebar / Responsive Drawer -->
 <aside id="app-sidebar"
        aria-label="Menu utama"
-       class="app-sidebar fixed inset-y-0 left-0 z-40 w-72 bg-white border-r border-slate-200 flex flex-col -translate-x-full transition-transform duration-200 lg:translate-x-0 lg:static lg:inset-auto">
+       class="app-sidebar fixed inset-y-0 left-0 z-40 w-72 bg-blue-950/90 border-r border-blue-100/20 backdrop-blur-lg flex flex-col -translate-x-full transition-transform duration-200 lg:translate-x-0 lg:static lg:inset-auto">
     <div class="h-20 px-5 border-b border-slate-100 flex items-center justify-between shrink-0">
         <a href="{{ route('dashboard') }}" class="flex items-center gap-3 min-w-0">
             <img src="{{ asset('images/logo-ibnu-juraimi.png') }}" alt="" width="300" height="247" class="logo-on-light h-11 w-auto shrink-0">
