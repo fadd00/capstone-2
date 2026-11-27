@@ -29,7 +29,7 @@
                                 <th scope="col" class="px-6 py-3 text-left font-medium text-gray-600 uppercase text-xs">Tingkatan</th>
                                 <th scope="col" class="px-6 py-3 text-left font-medium text-gray-600 uppercase text-xs">Kelas</th>
                                 <th scope="col" class="px-6 py-3 text-left font-medium text-gray-600 uppercase text-xs">Deskripsi</th>
-                                <th scope="col" class="px-6 py-3 text-right font-medium text-gray-600 uppercase text-xs">Aksi</th>
+                                <th scope="col" class="px-6 py-3 text-center font-medium text-gray-600 uppercase text-xs">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200">
@@ -39,7 +39,7 @@
                                     <td data-label="Tingkatan" class="px-6 py-4 whitespace-nowrap uppercase text-xs">{{ $item->tingkatan }}</td>
                                     <td data-label="Kelas" class="px-6 py-4 whitespace-nowrap text-gray-600">{{ $item->kelas ?? 'Semua' }}</td>
                                     <td data-label="Deskripsi" class="px-6 py-4 text-gray-600 max-w-xs truncate">{{ $item->deskripsi ?? '-' }}</td>
-                                    <td data-label="Aksi" class="px-6 py-4 whitespace-nowrap text-right space-x-2">
+                                    <td data-label="Aksi" class="px-6 py-4 whitespace-nowrap text-center justify-center space-x-2">
                                         <a href="{{ route('admin.kegiatan.show', $item->id) }}" class="text-blue-700 hover:text-blue-900">Detail <span class="sr-only">{{ $item->nama_kegiatan }}</span></a>
                                         <a href="{{ route('admin.kegiatan.edit', $item->id) }}" class="text-amber-700 hover:text-amber-900">Edit <span class="sr-only">{{ $item->nama_kegiatan }}</span></a>
                                         <form action="{{ route('admin.kegiatan.destroy', $item->id) }}" method="POST" class="inline" data-confirm="Hapus kegiatan {{ $item->nama_kegiatan }}?" data-confirm-title="Hapus Kegiatan">

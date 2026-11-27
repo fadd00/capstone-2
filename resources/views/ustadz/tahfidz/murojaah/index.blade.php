@@ -29,7 +29,7 @@
                                 <th scope="col" class="px-4 py-3">Juz / Surat / Ayat</th>
                                 <th scope="col" class="px-4 py-3">Nilai</th>
                                 <th scope="col" class="px-4 py-3">Status</th>
-                                <th scope="col" class="px-4 py-3 text-right">Aksi</th>
+                                <th scope="col" class="px-4 py-3 text-center">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200 bg-white">
@@ -46,7 +46,7 @@
                                             {{ $item->status_selesai ? 'Selesai' : 'Belum Selesai' }}
                                         </span>
                                     </td>
-                                    <td data-label="Aksi" class="px-4 py-3 text-right">
+                                    <td data-label="Aksi" class="px-4 py-3 text-center justify-center">
                                         <a href="{{ route('ustadz.murojaah.show', $item->id) }}" class="text-emerald-700 hover:text-emerald-900 font-medium">Detail</a>
                                     </td>
                                 </tr>

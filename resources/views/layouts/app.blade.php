@@ -20,22 +20,22 @@
             @include('layouts.navigation')
 
             <div id="app-shell" class="flex-1 min-w-0 flex flex-col">
-                <div class="app-topbar h-16 bg-white/80 border-b border-slate-200/80 px-4 sm:px-6 lg:px-8 flex items-center justify-between sticky top-0 z-20 backdrop-blur-md">
+                <div class="app-topbar h-16 border-b px-4 sm:px-6 lg:px-8 flex items-center justify-between sticky top-0 z-20 backdrop-blur-md text-white">
                     <div class="flex items-center gap-3 min-w-0">
                         <button id="sidebar-open-btn"
                                 type="button"
                                 aria-label="Buka menu"
                                 aria-expanded="false"
                                 aria-controls="app-sidebar"
-                                class="lg:hidden p-2 rounded-xl text-slate-600 hover:text-blue-900 hover:bg-blue-50 transition">
+                                class="lg:hidden p-2 rounded-xl text-blue-100 hover:text-white hover:bg-white/10 transition">
                             <svg class="h-5 w-5" aria-hidden="true" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                             </svg>
                         </button>
                         <div class="min-w-0">
-                            <span class="hidden lg:block text-xs font-medium uppercase tracking-[0.16em] text-slate-400">Portal Digital Pesantren</span>
-                            <span class="lg:hidden flex items-center gap-2 font-semibold text-sm text-blue-900 truncate">
-                                <img src="{{ asset('images/logo-ibnu-juraimi.png') }}" alt="" width="300" height="247" class="logo-on-light h-8 w-auto shrink-0">
+                            <span class="hidden lg:block text-xs font-medium uppercase tracking-[0.16em] text-blue-200">Portal Digital Pesantren</span>
+                            <span class="lg:hidden flex items-center gap-2 font-semibold text-sm text-white truncate">
+                                <img src="{{ asset('images/logo-ibnu-juraimi.png') }}" alt="" width="300" height="247" class="logo-on-dark h-8 w-auto shrink-0">
                                 PPTQ Ibnu Juraimi
                             </span>
                         </div>
@@ -48,19 +48,21 @@
                                         popovertarget="user-account-menu"
                                         aria-controls="user-account-menu"
                                         aria-expanded="false"
+                                        aria-label="{{ Auth::user()->name }}"
+                                        title="{{ Auth::user()->name }}"
                                         data-popover-trigger
-                                        class="inline-flex items-center gap-2 px-2.5 py-1.5 text-sm font-semibold rounded-xl text-slate-700 hover:text-blue-900 hover:bg-blue-50 transition">
-                                    <span class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-xs font-bold text-blue-800">
+                                        class="inline-flex items-center justify-center p-1.5 rounded-full ring-2 ring-white/25 hover:ring-amber-400/70 text-blue-100 hover:text-white hover:bg-white/10 transition">
+                                    <span class="flex h-9 w-9 items-center justify-center rounded-full bg-white/15 text-xs font-bold text-white">
                                         {{ \Illuminate\Support\Str::upper(\Illuminate\Support\Str::substr(Auth::user()->name, 0, 1)) }}
                                     </span>
-                                    <span>{{ Auth::user()->name }}</span>
-                                    <svg class="ms-1 fill-current h-4 w-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                    </svg>
                                 </button>
                             </x-slot>
 
                             <x-slot name="content">
+                                <div class="px-4 py-3 border-b border-slate-100">
+                                    <p class="text-sm font-semibold text-slate-900 break-words">{{ Auth::user()->name }}</p>
+                                    <p class="mt-0.5 text-xs text-slate-500 break-all">{{ Auth::user()->email }}</p>
+                                </div>
                                 <x-dropdown-link :href="route('profile.edit')">
                                     {{ __('Profil') }}
                                 </x-dropdown-link>

@@ -19,7 +19,7 @@
                             <tr>
                                 <th scope="col" class="px-6 py-3 text-left font-medium text-gray-600 uppercase text-xs">Ustadz Pembina</th>
                                 <th scope="col" class="px-6 py-3 text-left font-medium text-gray-600 uppercase text-xs">Santri Binaan</th>
-                                <th scope="col" class="px-6 py-3 text-right font-medium text-gray-600 uppercase text-xs">Aksi</th>
+                                <th scope="col" class="px-6 py-3 text-center font-medium text-gray-600 uppercase text-xs">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200">
@@ -52,7 +52,7 @@
                                             </fieldset>
                                         </form>
                                     </td>
-                                    <td data-label="Aksi" class="px-6 py-4 whitespace-nowrap text-right align-top">
+                                    <td data-label="Aksi" class="px-6 py-4 whitespace-nowrap text-center justify-center align-top">
                                         <button type="submit" form="form-santri-{{ $ustadz->id }}" class="px-4 py-2 bg-emerald-700 text-white rounded-md hover:bg-emerald-800 text-xs font-medium">
                                             Simpan Penugasan <span class="sr-only">{{ $ustadz->name }}</span>
                                         </button>

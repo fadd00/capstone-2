@@ -154,7 +154,15 @@
 }
 
 .app-topbar {
-    box-shadow: 0 1px 3px rgb(15 23 42 / 0.025);
+    background: linear-gradient(100deg, rgb(30 58 138 / 0.97), rgb(30 64 175 / 0.95) 50%, rgb(30 58 138 / 0.97));
+    border-color: rgb(96 165 250 / 0.45);
+    color: #ffffff;
+    box-shadow: 0 1px 10px rgb(15 23 42 / 0.14);
+}
+
+.app-sidebar .app-sidebar-logout:hover {
+    background-color: rgb(239 68 68 / 0.2);
+    color: #ffffff;
 }
 
 #app-shell {
@@ -764,6 +772,17 @@ dialog.app-dialog::backdrop {
         text-align: end;
         white-space: normal !important;
         border-block-end: 1px solid #f3f4f6;
+    }
+
+    .responsive-table tbody td[data-label="Aksi"] {
+        flex-wrap: wrap;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .responsive-table tbody td[data-label="Aksi"]::before {
+        flex-basis: 100%;
+        text-align: center;
     }
 
     .responsive-table tbody td:last-child {

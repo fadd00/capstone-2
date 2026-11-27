@@ -108,4 +108,30 @@
             </div>
         @endforeach
     </nav>
+
+    <div class="mt-auto pt-3 border-t border-white/15 px-4 pb-4 shrink-0">
+        <div class="flex items-center justify-between gap-2.5">
+            <a href="{{ route('profile.edit') }}"
+               class="app-nav-link flex min-w-0 flex-1 items-center gap-2.5 rounded-xl px-2 py-2 transition">
+                <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/15 text-xs font-bold text-white">
+                    {{ \Illuminate\Support\Str::upper(\Illuminate\Support\Str::substr(Auth::user()->name, 0, 1)) }}
+                </span>
+                <span class="min-w-0 flex-1">
+                    <span class="block truncate text-xs font-medium text-white">{{ Auth::user()->name }}</span>
+                    <span class="block truncate text-[10px] text-blue-200">{{ __('Profil') }}</span>
+                </span>
+            </a>
+            <form method="POST" action="{{ route('logout') }}" class="shrink-0">
+                @csrf
+                <button type="submit"
+                        title="Keluar"
+                        aria-label="Keluar"
+                        class="app-sidebar-logout shrink-0 rounded-lg p-2 text-blue-100 transition hover:bg-red-500/20 hover:text-white">
+                    <svg class="h-5 w-5" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15.75 8.25V5.625A2.625 2.625 0 0 0 13.125 3h-6A2.625 2.625 0 0 0 4.5 5.625v12.75A2.625 2.625 0 0 0 7.125 21h6a2.625 2.625 0 0 0 2.625-2.625V15.75m-4.5-3.75h9m0 0-3.75-3.75M20.25 12l-3.75 3.75" />
+                    </svg>
+                </button>
+            </form>
+        </div>
+    </div>
 </aside>

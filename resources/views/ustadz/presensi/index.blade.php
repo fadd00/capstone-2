@@ -28,7 +28,7 @@
                                 <th scope="col" class="px-6 py-3 text-left font-medium text-gray-600 uppercase text-xs">Foto Bukti</th>
                                 <th scope="col" class="px-6 py-3 text-left font-medium text-gray-600 uppercase text-xs">Status GPS</th>
                                 <th scope="col" class="px-6 py-3 text-left font-medium text-gray-600 uppercase text-xs">Materi</th>
-                                <th scope="col" class="px-6 py-3 text-right font-medium text-gray-600 uppercase text-xs">Aksi</th>
+                                <th scope="col" class="px-6 py-3 text-center font-medium text-gray-600 uppercase text-xs">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200">
@@ -63,7 +63,7 @@
                                     <td data-label="Materi" class="px-6 py-4 text-gray-600 max-w-xs truncate">
                                         {{ $session->materi ?? '-' }}
                                     </td>
-                                    <td data-label="Aksi" class="px-6 py-4 whitespace-nowrap text-right space-x-2">
+                                    <td data-label="Aksi" class="px-6 py-4 whitespace-nowrap text-center justify-center space-x-2">
                                         <a href="{{ route('ustadz.presensi-santri.create', $session->id) }}" class="text-emerald-700 hover:text-emerald-900 font-medium text-xs">
                                             Presensi Santri
                                         </a>

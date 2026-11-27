@@ -27,7 +27,7 @@
                             <tr>
                                 <th scope="col" class="px-6 py-3 text-left font-medium text-gray-600 uppercase text-xs">Nama Ustadz</th>
                                 <th scope="col" class="px-6 py-3 text-left font-medium text-gray-600 uppercase text-xs">Email</th>
-                                <th scope="col" class="px-6 py-3 text-right font-medium text-gray-600 uppercase text-xs">Aksi</th>
+                                <th scope="col" class="px-6 py-3 text-center font-medium text-gray-600 uppercase text-xs">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200">
@@ -35,7 +35,7 @@
                                 <tr>
                                     <td data-label="Nama Ustadz" class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">{{ $item->name }}</td>
                                     <td data-label="Email" class="px-6 py-4 whitespace-nowrap text-gray-600">{{ $item->email }}</td>
-                                    <td data-label="Aksi" class="px-6 py-4 whitespace-nowrap text-right space-x-2">
+                                    <td data-label="Aksi" class="px-6 py-4 whitespace-nowrap text-center justify-center space-x-2">
                                         <a href="{{ route('admin.ustadz.show', $item->id) }}" class="text-blue-700 hover:text-blue-900">Detail <span class="sr-only">{{ $item->name }}</span></a>
                                         <a href="{{ route('admin.ustadz.edit', $item->id) }}" class="text-amber-700 hover:text-amber-900">Edit <span class="sr-only">{{ $item->name }}</span></a>
                                         <form action="{{ route('admin.ustadz.destroy', $item->id) }}" method="POST" class="inline" data-confirm="Hapus akun ustadz {{ $item->name }}?" data-confirm-title="Hapus Ustadz">

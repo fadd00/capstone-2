@@ -72,7 +72,7 @@
                                 <th scope="col" class="px-4 py-3 text-left font-medium">Nama</th>
                                 <th scope="col" class="px-4 py-3 text-left font-medium">Email</th>
                                 <th scope="col" class="px-4 py-3 text-left font-medium">Terdaftar Pada</th>
-                                <th scope="col" class="px-4 py-3 text-right font-medium">Aksi</th>
+                                <th scope="col" class="px-4 py-3 text-center font-medium">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200 bg-white">
@@ -81,7 +81,7 @@
                                     <td data-label="Nama" class="px-4 py-3 font-semibold text-gray-900">{{ $adminUser->name }}</td>
                                     <td data-label="Email" class="px-4 py-3 text-gray-700">{{ $adminUser->email }}</td>
                                     <td data-label="Terdaftar Pada" class="px-4 py-3 text-gray-600">{{ $adminUser->created_at?->format('d M Y H:i') ?? '-' }}</td>
-                                    <td data-label="Aksi" class="px-4 py-3 text-right space-x-2">
+                                    <td data-label="Aksi" class="px-4 py-3 text-center justify-center space-x-2">
                                         <form action="{{ route('admin.akun.reset.update', $adminUser->id) }}"
                                               method="POST"
                                               class="inline"
