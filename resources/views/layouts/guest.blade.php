@@ -13,11 +13,11 @@
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans text-slate-900 antialiased bg-slate-50">
+    <body class="font-sans text-slate-900 antialiased bg-slate-950">
         <a href="#main-content" class="skip-link">Lewati ke konten utama</a>
 
-        <main id="main-content" tabindex="-1" class="guest-shell min-h-screen flex items-center justify-center px-4 py-8 sm:px-8">
-            <div class="guest-panel w-full max-w-5xl overflow-hidden rounded-[2rem] bg-white shadow-xl shadow-blue-950/5 ring-1 ring-slate-200/80 lg:grid lg:grid-cols-[1fr_0.9fr]">
+        <main id="main-content" tabindex="-1" class="guest-shell min-h-screen flex flex-col items-center justify-start px-4 py-5 sm:px-8 sm:py-8 lg:justify-center">
+            <div class="guest-panel relative z-10 mx-auto w-full max-w-md overflow-visible rounded-none bg-transparent shadow-none ring-0 lg:max-w-5xl lg:overflow-hidden lg:rounded-[2rem] lg:bg-white lg:shadow-xl lg:shadow-blue-950/5 lg:ring-1 lg:ring-slate-200/80 lg:grid lg:grid-cols-[1fr_0.9fr]">
                 <section class="guest-intro hidden flex-col justify-between bg-blue-950 p-10 text-white lg:flex xl:p-14">
                     <a href="{{ route('home') }}" class="flex items-center gap-3">
                         <img src="{{ asset('images/logo-ibnu-juraimi.png') }}" alt="" width="300" height="247" class="h-16 w-auto">
@@ -33,14 +33,15 @@
                     <div aria-hidden="true" class="guest-orb"></div>
                 </section>
 
-                <div class="flex flex-col justify-center p-6 sm:p-10 lg:p-12">
-                    <header class="mb-8 text-center lg:text-left">
-                        <img src="{{ asset('images/logo-ibnu-juraimi.png') }}" alt="Logo PPTQ Ibnu Juraimi" width="300" height="247" class="logo-on-light mx-auto mb-4 h-20 w-auto lg:hidden">
-                        <a href="{{ route('home') }}" class="inline-block text-xl font-bold tracking-tight text-blue-950">PPTQ Muhammadiyah Ibnu Juraimi</a>
-                        <p class="mt-2 text-sm text-slate-500">Sistem Presensi &amp; Monitoring Tahfidz</p>
+                <div class="guest-content flex flex-col justify-center p-0 lg:p-12">
+                    <header class="mb-6 text-center sm:mb-8 lg:text-left">
+                        <img src="{{ asset('images/logo-ibnu-juraimi.png') }}" alt="Logo PPTQ Ibnu Juraimi" width="300" height="247" class="logo-on-dark mx-auto mb-3 h-16 w-auto sm:h-20 lg:hidden">
+                        <a href="{{ route('home') }}" class="inline-block text-base font-bold tracking-tight text-white sm:text-xl lg:text-blue-950">PPTQ Muhammadiyah Ibnu Juraimi</a>
+                        <p class="mt-2 text-sm text-blue-100/80 lg:text-slate-500">Sistem Presensi &amp; Monitoring Tahfidz</p>
                     </header>
-                    <div class="w-full">
-                    {{ $slot }}
+                    <div class="guest-form-card w-full">
+                        {{ $slot }}
+                        <a href="{{ route('home') }}" class="guest-home-link">Kembali ke Beranda</a>
                     </div>
                 </div>
             </div>

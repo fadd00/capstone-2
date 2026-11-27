@@ -453,6 +453,143 @@
 }
 
 /* Guest sign-in */
+.guest-shell {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    min-height: 100vh;
+    min-height: 100dvh;
+    background: linear-gradient(135deg, #0f172a 0%, #172554 48%, #1e3a8a 100%);
+}
+
+.guest-shell::before,
+.guest-shell::after {
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    content: "";
+    pointer-events: none;
+}
+
+.guest-shell::before {
+    background:
+        radial-gradient(ellipse at 12% 12%, rgb(59 130 246 / 0.3), transparent 28rem),
+        radial-gradient(ellipse at 88% 76%, rgb(30 64 175 / 0.34), transparent 32rem),
+        radial-gradient(ellipse at 58% 100%, rgb(217 119 6 / 0.1), transparent 24rem);
+}
+
+.guest-shell::after {
+    opacity: 0.03;
+    background-image:
+        linear-gradient(30deg, #bfdbfe 1px, transparent 1px),
+        linear-gradient(150deg, #bfdbfe 1px, transparent 1px);
+    background-size: 56px 56px;
+}
+
+.guest-form-card {
+    position: relative;
+    overflow: hidden;
+    padding: 1.5rem;
+    border: 1px solid rgb(226 232 240 / 0.85);
+    border-radius: 1.5rem;
+    background-color: rgb(255 255 255 / 0.97);
+    box-shadow: 0 18px 48px rgb(2 6 23 / 0.22);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+}
+
+.guest-form-card::before {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline: 0;
+    height: 4px;
+    content: "";
+    pointer-events: none;
+    background: linear-gradient(90deg, #1d4ed8 0%, #2563eb 72%, #d97706 72%, #f59e0b 100%);
+}
+
+.guest-form-card h1 {
+    color: #172554;
+}
+
+.guest-form-card input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]) {
+    min-height: 44px;
+    padding-block: 0.625rem;
+    border-color: #cbd5e1;
+    border-radius: 0.75rem;
+    font-size: 1rem;
+}
+
+.guest-form-card input:focus {
+    border-color: #1d4ed8;
+    --tw-ring-color: rgb(37 99 235 / 0.2);
+}
+
+.guest-form-card input[type="checkbox"] {
+    width: 1.125rem;
+    height: 1.125rem;
+    accent-color: #0f766e;
+}
+
+.guest-form-card button[data-password-toggle] {
+    min-height: 44px;
+    padding-inline: 0.5rem;
+    color: #0f766e;
+}
+
+.guest-form-card button[data-password-toggle]:hover {
+    color: #115e59;
+}
+
+.guest-form-card form > div.flex.items-center.justify-between.text-sm {
+    flex-wrap: wrap;
+    column-gap: 0.75rem;
+    row-gap: 0.625rem;
+}
+
+.guest-form-card form > div.flex.items-center.justify-between.text-sm a {
+    color: #334155;
+    text-underline-offset: 3px;
+}
+
+.guest-form-card form > div.flex.items-center.justify-between.text-sm a:hover {
+    color: #1d4ed8;
+}
+
+.guest-form-card button[type="submit"] {
+    min-height: 44px;
+    border-radius: 0.75rem;
+    background-color: #1d4ed8;
+    box-shadow: 0 4px 12px rgb(29 78 216 / 0.2);
+    transition: background-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.guest-form-card button[type="submit"]:hover {
+    background-color: #1e40af;
+    box-shadow: 0 7px 18px rgb(29 78 216 / 0.24);
+}
+
+.guest-home-link {
+    display: block;
+    margin-block-start: 1.25rem;
+    padding-block-start: 1rem;
+    border-block-start: 1px solid #e2e8f0;
+    color: #475569;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+    transition: color 160ms ease;
+}
+
+.guest-home-link:hover {
+    color: #1d4ed8;
+}
+
+.logo-on-dark {
+    filter: drop-shadow(0 1px 2px rgb(2 6 23 / 0.7));
+}
+
 .guest-intro {
     min-height: 36rem;
     position: relative;
@@ -470,6 +607,33 @@
     border-radius: 50%;
     background: radial-gradient(circle, rgb(96 165 250 / 0.22), transparent 68%);
     box-shadow: 0 0 0 2.5rem rgb(191 219 254 / 0.035), 0 0 0 5rem rgb(191 219 254 / 0.025);
+}
+
+@media (min-width: 640px) {
+    .guest-form-card {
+        padding: 2rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .guest-form-card {
+        overflow: visible;
+        padding: 0;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
+    }
+
+    .guest-form-card::before {
+        display: none;
+    }
+
+    .guest-home-link {
+        display: none;
+    }
 }
 
 /* Native <dialog> modal styling & scroll containment */
