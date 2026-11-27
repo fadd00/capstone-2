@@ -60,7 +60,7 @@
                                 <th scope="col" class="px-4 py-3">Tanggal</th>
                                 <th scope="col" class="px-4 py-3">Santri</th>
                                 <th scope="col" class="px-4 py-3">Ustadz Pembina</th>
-                                <th scope="col" class="px-4 py-3">Juz / Surat / Ayat</th>
+                                <th scope="col" class="px-4 py-3">Surat (Juz / Ayat)</th>
                                 <th scope="col" class="px-4 py-3">Nilai</th>
                                 <th scope="col" class="px-4 py-3">Status</th>
                             </tr>
@@ -73,7 +73,7 @@
                                     </td>
                                     <td data-label="Santri" class="px-4 py-3 font-semibold text-gray-900">{{ $item->santri->nama ?? '-' }}</td>
                                     <td data-label="Ustadz Pembina" class="px-4 py-3 text-xs text-gray-600">{{ $item->ustadz->name ?? '-' }}</td>
-                                    <td data-label="Juz / Surat / Ayat" class="px-4 py-3 font-semibold text-emerald-800">{{ $item->surat }} (Juz {{ $item->juz }}, Ayat {{ $item->ayat }})</td>
+                                    <td data-label="Surat (Juz / Ayat)" class="px-4 py-3 font-semibold text-emerald-800">{{ $item->surat }} (Juz {{ $item->juz }}, Ayat {{ $item->ayat }})</td>
                                     <td data-label="Nilai" class="px-4 py-3 font-bold text-emerald-700">{{ $item->nilai ?? '-' }}</td>
                                     <td data-label="Status" class="px-4 py-3">
                                         <span class="px-2 py-1 rounded-full text-xs font-semibold {{ $item->status_selesai ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">

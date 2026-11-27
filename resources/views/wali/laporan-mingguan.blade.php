@@ -57,7 +57,7 @@
                                 <tr>
                                     <th scope="col" class="px-4 py-3">Tanggal</th>
                                     <th scope="col" class="px-4 py-3">Santri</th>
-                                    <th scope="col" class="px-4 py-3">Juz / Surat / Ayat</th>
+                                    <th scope="col" class="px-4 py-3">Surat (Juz / Ayat)</th>
                                     <th scope="col" class="px-4 py-3">Nilai</th>
                                     <th scope="col" class="px-4 py-3">Ustadz Pembimbing</th>
                                     <th scope="col" class="px-4 py-3">Catatan</th>
@@ -68,7 +68,7 @@
                                     <tr class="hover:bg-gray-50">
                                         <td data-label="Tanggal" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">{{ $setoran->tanggal ? \Carbon\Carbon::parse($setoran->tanggal)->format('d/m/Y') : '-' }}</td>
                                         <td data-label="Santri" class="px-4 py-3 font-medium text-gray-900">{{ $setoran->santri->nama ?? '-' }}</td>
-                                        <td data-label="Juz / Surat / Ayat" class="px-4 py-3 font-semibold text-gray-800">{{ $setoran->surat }} (Juz {{ $setoran->juz }}, Ayat {{ $setoran->ayat }})</td>
+                                        <td data-label="Surat (Juz / Ayat)" class="px-4 py-3 font-semibold text-gray-800">{{ $setoran->surat }} (Juz {{ $setoran->juz }}, Ayat {{ $setoran->ayat }})</td>
                                         <td data-label="Nilai" class="px-4 py-3 font-bold text-emerald-700">{{ $setoran->nilai }}</td>
                                         <td data-label="Ustadz Pembimbing" class="px-4 py-3">{{ $setoran->ustadz->name ?? '-' }}</td>
                                         <td data-label="Catatan" class="px-4 py-3 italic text-gray-600">{{ $setoran->catatan ?? '-' }}</td>
@@ -95,7 +95,7 @@
                                 <tr>
                                     <th scope="col" class="px-4 py-3">Tanggal</th>
                                     <th scope="col" class="px-4 py-3">Santri</th>
-                                    <th scope="col" class="px-4 py-3">Juz / Surat / Ayat</th>
+                                    <th scope="col" class="px-4 py-3">Surat (Juz / Ayat)</th>
                                     <th scope="col" class="px-4 py-3">Nilai</th>
                                     <th scope="col" class="px-4 py-3">Ustadz Pembimbing</th>
                                     <th scope="col" class="px-4 py-3">Catatan</th>
@@ -106,7 +106,7 @@
                                     <tr class="hover:bg-gray-50">
                                         <td data-label="Tanggal" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">{{ $murojaah->tanggal ? \Carbon\Carbon::parse($murojaah->tanggal)->format('d/m/Y') : '-' }}</td>
                                         <td data-label="Santri" class="px-4 py-3 font-medium text-gray-900">{{ $murojaah->santri->nama ?? '-' }}</td>
-                                        <td data-label="Juz / Surat / Ayat" class="px-4 py-3 font-semibold text-gray-800">{{ $murojaah->surat }} (Juz {{ $murojaah->juz }}, Ayat {{ $murojaah->ayat }})</td>
+                                        <td data-label="Surat (Juz / Ayat)" class="px-4 py-3 font-semibold text-gray-800">{{ $murojaah->surat }} (Juz {{ $murojaah->juz }}, Ayat {{ $murojaah->ayat }})</td>
                                         <td data-label="Nilai" class="px-4 py-3 font-bold text-green-700">{{ $murojaah->nilai }}</td>
                                         <td data-label="Ustadz Pembimbing" class="px-4 py-3">{{ $murojaah->ustadz->name ?? '-' }}</td>
                                         <td data-label="Catatan" class="px-4 py-3 italic text-gray-600">{{ $murojaah->catatan ?? '-' }}</td>
